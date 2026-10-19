@@ -342,6 +342,62 @@ tbody tr:last-child td{border-bottom:0}
   .fab-ikon{width:44px;height:44px}
   .sohbet{width:100%}
 }
+
+/* ---------- Sade asistan (küçük kutu) + yukarı çık ---------- */
+.fab{height:42px;padding:0 14px 0 6px;gap:6px;font-size:13px;box-shadow:0 6px 16px rgba(31,63,39,.22);right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.fab-ikon{width:30px;height:30px}
+.fab-ikon svg{width:22px;height:17px}
+.fab-ikon::after{width:8px;height:8px;border-width:1.5px}
+.perde{background:rgba(31,63,39,.15)}
+.sohbet{top:auto;left:auto;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  width:min(360px,calc(100vw - 32px));height:min(540px,calc(100dvh - 40px));padding:0;
+  background:var(--kagit);backdrop-filter:none;-webkit-backdrop-filter:none;border:1px solid var(--cizgi);border-radius:16px;overflow:hidden;
+  box-shadow:0 12px 32px rgba(31,63,39,.18);transform:translateY(16px) scale(.98);opacity:0;pointer-events:none;transition:transform .25s,opacity .25s}
+#asistan-ac:checked ~ .sohbet{transform:none;opacity:1;pointer-events:auto}
+.s-ust{flex:none;gap:10px;padding:12px 14px;background:var(--orman-koyu)}
+.s-ust .fab-ikon{width:32px;height:32px}
+.s-ust .fab-ikon::after{display:none}
+.s-ust h4{font-size:14px}
+.s-ust small{font-size:11.5px;margin-top:1px}
+.kapat{width:30px;height:30px}
+.kapat svg{width:14px;height:14px}
+.s-govde{min-height:0;padding:14px;gap:8px;background:var(--krem);overscroll-behavior:contain}
+.msj{padding:8px 11px;border-radius:12px;font-size:13.5px}
+.hizli{gap:6px}
+.hizli span{font:600 12px/1 var(--font-govde);padding:7px 10px;border:1px solid var(--cizgi);cursor:pointer}
+.hizli span:hover{border-color:var(--orman)}
+.lead-kart{display:none;padding:10px;gap:6px;border-radius:12px}
+.lead-kart.acik{display:grid}
+.lead-kart b{font-size:12.5px}
+.lead-kart input{font-size:13px;padding:7px 9px;border-width:1px;border-radius:8px}
+.lead-kart .btn{height:34px;font-size:12.5px}
+.lead-kart small{font-size:10.5px}
+.s-alt{flex:none;gap:6px;padding:10px;background:var(--kagit)}
+.s-alt input{font-size:13.5px;padding:9px 13px;border-width:1px;background:var(--krem)}
+.s-alt .btn{height:38px;padding:0 16px;font-size:13px}
+.yukari{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:70;
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--cizgi);background:var(--kagit);color:var(--orman);cursor:pointer;
+  display:grid;place-items:center;box-shadow:0 6px 16px rgba(31,63,39,.15);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s,background .2s}
+.yukari.goster{opacity:1;pointer-events:auto;transform:none}
+.yukari:hover{background:var(--orman-acik);border-color:var(--orman)}
+.yukari svg{width:18px;height:18px}
+@media (max-width:750px){
+  .fab{height:42px;padding:0 12px 0 6px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .fab-metin{display:inline}
+  .yukari{right:16px;bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+  .sohbet{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:calc(100vw - 32px);height:min(520px,calc(100dvh - 32px))}
+  .menu{width:100%;justify-content:space-between;gap:0;overflow:visible}
+  .menu a{padding:8px 6px;font-size:14px}
+}
+@media (max-width:420px){
+  .ust .ic{gap:10px;min-height:0}
+  .logo svg{width:40px;height:31px}
+  .logo-yazi b{font-size:18px}
+  .logo-yazi small{font-size:8px;letter-spacing:.14em}
+  .btn-panel{height:36px;padding:0 12px;font-size:13px;gap:6px}
+  .btn-panel svg{width:14px;height:14px}
+}
+@media (max-width:380px){.menu a{padding:8px 4px;font-size:13px}.btn-panel{padding:0 10px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 /* ---------- Ana sayfa: tarla defteri düzeni ---------- */
 .kenar-not{display:block;font:600 12px/1 ui-monospace,"SF Mono",Consolas,monospace;letter-spacing:.08em;color:var(--altin);margin-bottom:10px}
@@ -808,7 +864,7 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
   </div>
   <div class="s-govde" id="yanitAlani">
     <div class="msj bot">Merhaba! Ben Dijital Çoban asistanıyım. Modüler ahır, paketler, kurulum ve devlet destekleri hakkında sorularınızı yanıtlayabilirim.</div>
-    <div class="hizli"><span>Paketleri karşılaştır</span><span>Modül ekleme</span><span>Hibe bilgisi</span></div>
+    <div class="hizli"><span>Paketleri karşılaştır</span><span>Modül ekleme</span><span>Hibe bilgisi</span><span class="ara-ac">Sizi arayalım</span></div>
     <div class="lead-kart">
       <b>Sizi arayalım</b>
       <div class="satir"><input id="sIsim" placeholder="Ad Soyad" aria-label="Ad Soyad"><input id="sTelefon" placeholder="Telefon" aria-label="Telefon"></div>
@@ -871,7 +927,7 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
   if (govde) {
     $('sorButon').addEventListener('click', function () { sor(); });
     $('mesajInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') sor(); });
-    govde.querySelectorAll('.hizli span').forEach(function (s) {
+    govde.querySelectorAll('.hizli span:not(.ara-ac)').forEach(function (s) {
       s.style.cursor = 'pointer';
       s.addEventListener('click', function () { sor(s.textContent); });
     });
@@ -1030,4 +1086,15 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
 })();
 </script>
 
+<button class="yukari" type="button" id="yukariBtn" aria-label="Sayfanın başına dön"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function(){
+  var b=document.getElementById('yukariBtn');
+  function kontrol(){b.classList.toggle('goster',window.scrollY>400)}
+  window.addEventListener('scroll',kontrol,{passive:true});kontrol();
+  b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+  var ara=document.querySelector('.hizli .ara-ac'),lead=document.querySelector('.lead-kart'),gv=document.getElementById('yanitAlani');
+  if(ara&&lead){ara.addEventListener('click',function(){lead.classList.toggle('acik');gv.scrollTop=gv.scrollHeight;});}
+})();
+</script>
 </body></html>
