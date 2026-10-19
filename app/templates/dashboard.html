@@ -1,1 +1,90 @@
-<!-- Yonetim paneli (Modul G) -->
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dijital Çoban – Yönetim Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--yesil:#2F5D3A;--koyu:#1F3F27;--krem:#F4EFE6;--altin:#D9A441;--cayir:#E6EEE5;--gri:#5B6B5F}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Open Sans',sans-serif;background:var(--krem);color:var(--koyu)}
+header{background:var(--yesil);color:var(--krem);padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+header b{font-family:Montserrat;font-size:20px}header a{color:var(--krem);font-size:14px;opacity:.8}
+main{max-width:1100px;margin:28px auto;padding:0 16px}
+h1{font-family:Montserrat;font-size:24px;color:var(--yesil);margin-bottom:16px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.k{background:#fff;border-radius:12px;padding:16px;box-shadow:0 4px 14px rgba(31,63,39,.07)}
+.k small{color:var(--gri);font-size:12px}.k div{font-family:Montserrat;font-weight:800;font-size:28px;color:var(--yesil);margin-top:4px}
+.arac{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+input,select{padding:10px 12px;border:1px solid #d9d2c3;border-radius:10px;font:inherit;font-size:14px}
+button{background:var(--altin);border:0;border-radius:10px;padding:10px 16px;font-family:Montserrat;font-weight:700;cursor:pointer}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;font-size:14px}
+th{background:var(--koyu);color:var(--krem);text-align:left;padding:10px;font-family:Montserrat;font-size:12px}
+td{padding:10px;border-bottom:1px solid #eee7da}
+#durum{font-size:14px;margin:8px 0;color:var(--gri)}
+@media(max-width:820px){.kpi{grid-template-columns:1fr 1fr}table{font-size:12px}}
+</style>
+</head>
+<body>
+<header><b>Dijital Çoban · Yönetim Paneli</b><a href="/">Karşılama sayfası</a></header>
+<main>
+  <h1>Müşteri talepleri</h1>
+  <div class="kpi">
+    <div class="k"><small>Toplam talep</small><div id="kToplam">–</div></div>
+    <div class="k"><small>Son 7 gün</small><div id="k7">–</div></div>
+    <div class="k"><small>Ortalama hayvan (baş)</small><div id="kOrt">–</div></div>
+    <div class="k"><small>Talep edilen kapasite</small><div id="kKap">–</div></div>
+  </div>
+  <div class="arac">
+    <input id="token" type="password" placeholder="Yönetici anahtarı (ADMIN_TOKEN)">
+    <button id="yukle">Yükle</button>
+    <select id="filtre"><option value="">Tümü</option><option value="0-50">≤50 baş</option><option value="51-150">51–150 baş</option><option value="151-1000000">150+ baş</option></select>
+    <input id="ara" placeholder="İsim veya mesajda ara">
+  </div>
+  <div id="durum"></div>
+  <table><thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan</th><th>Mesaj</th><th>Tarih</th></tr></thead><tbody id="tablo"></tbody></table>
+</main>
+<script>
+let leadler = [];
+const tokenKutu = document.getElementById('token');
+try { tokenKutu.value = sessionStorage.getItem('dc_token') || ''; } catch (e) {}
+async function yukle(){
+  const durum=document.getElementById('durum');
+  try { sessionStorage.setItem('dc_token', tokenKutu.value); } catch (e) {}
+  try{
+    const r=await fetch('/api/leads',{headers:{'X-Admin-Token':tokenKutu.value}});
+    const v=await r.json();
+    if(!v.basari){ durum.textContent=v.hata; leadler=[]; ciz(); return; }
+    leadler=v.leadler; durum.textContent=''; ciz();
+  }catch(e){ durum.textContent='Sunucuya ulaşılamadı.'; }
+}
+function ciz(){
+  const f=document.getElementById('filtre').value, q=document.getElementById('ara').value.toLowerCase();
+  let liste=leadler.filter(l=>{
+    if(f){ const [a,b]=f.split('-').map(Number); if(l.hayvan_sayisi==null||l.hayvan_sayisi<a||l.hayvan_sayisi>b) return false; }
+    return !q || (l.isim+' '+(l.mesaj||'')).toLowerCase().includes(q);
+  });
+  const tb=document.getElementById('tablo'); tb.replaceChildren();
+  for(const l of liste){
+    const tr=document.createElement('tr');
+    for(const deger of [l.isim,l.telefon,l.hayvan_sayisi??'–',l.mesaj||'–',l.tarih]){
+      const td=document.createElement('td'); td.textContent=deger; tr.appendChild(td);   // textContent: XSS'e karsi
+    }
+    tb.appendChild(tr);
+  }
+  const hayvanli=leadler.filter(l=>l.hayvan_sayisi!=null);
+  const toplamKap=hayvanli.reduce((t,l)=>t+l.hayvan_sayisi,0);
+  const yediGun=Date.now()-7*864e5;
+  document.getElementById('kToplam').textContent=leadler.length;
+  document.getElementById('k7').textContent=leadler.filter(l=>Date.parse(l.tarih.replace(' ','T')+'Z')>=yediGun).length;
+  document.getElementById('kOrt').textContent=hayvanli.length?Math.round(toplamKap/hayvanli.length):'–';
+  document.getElementById('kKap').textContent=toplamKap.toLocaleString('tr-TR');
+}
+document.getElementById('yukle').onclick=yukle;
+document.getElementById('filtre').onchange=ciz;
+document.getElementById('ara').oninput=ciz;
+yukle();
+</script>
+</body>
+</html>

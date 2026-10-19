@@ -1,1 +1,945 @@
-<!-- Karsilama sayfasi (Modul G) -->
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.dash-giris{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dash-giris input{font:400 15px/1.3 var(--font-govde);border:1.5px solid var(--cizgi);background:var(--kagit);border-radius:12px;padding:12px 14px;min-width:220px;color:var(--metin)}
+.dash-giris .btn{height:46px}
+.form-sonuc{grid-column:1/-1;font-weight:600;min-height:1em}
+.form-sonuc[data-tur="ok"]{color:var(--orman)}
+.form-sonuc[data-tur="hata"]{color:#B03A2E}
+button:disabled{opacity:.6;cursor:wait}
+</style></head><body>
+<title>Dijital Çoban Site Tasarımı</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: tek sayfa içinde 4 "sayfa" (CSS :target). Üstte sabit başlık, 1200px içerik kolonu,
+   bölümler arası 96px; sağ altta sabit AI asistan butonu, tıklayınca sağdan açılan panel. */
+:root{
+  --orman:#2F5D3A;      /* birincil */
+  --orman-koyu:#1F3F27; /* başlık/metin koyu */
+  --krem:#F4EFE6;       /* zemin */
+  --altin:#D9A441;      /* vurgu */
+  --kagit:#FFFDF8;      /* kart yüzeyi */
+  --cizgi:#E2DACB;      /* ayırıcı */
+  --metin:#23312A;      /* gövde metni */
+  --soluk:#5E6B62;      /* ikincil metin */
+  --orman-acik:#E6EEE5; /* yeşil açık zemin */
+  --uyari:#B4532A;
+  --font-baslik:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-govde:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r-kart:16px; --r-btn:999px;
+  --golge:0 1px 2px rgba(31,63,39,.06),0 8px 24px rgba(31,63,39,.07);
+  --ic:1200px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{background:var(--krem);color:var(--metin);font:400 17px/1.65 var(--font-govde);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--krem)}
+h1,h2,h3,h4{font-family:var(--font-baslik);color:var(--orman-koyu);margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+a{color:var(--orman)}
+:focus-visible{outline:3px solid var(--altin);outline-offset:2px;border-radius:6px}
+.ic{max-width:var(--ic);margin-inline:auto}
+.eyebrow{font:700 13px/1 var(--font-baslik);letter-spacing:.14em;text-transform:uppercase;color:var(--orman)}
+.svg-sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- Butonlar ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:var(--r-btn);
+  font:600 15px/1 var(--font-baslik);text-decoration:none;border:2px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.btn-ana{background:var(--orman);color:var(--krem)}
+.btn-ana:hover{background:var(--orman-koyu)}
+.btn-cizgi{border-color:var(--orman);color:var(--orman);background:transparent}
+.btn-cizgi:hover{background:var(--orman);color:var(--krem)}
+.btn-altin{background:var(--altin);color:var(--orman-koyu)}
+.btn-altin:hover{background:#c99536}
+
+/* ---------- Başlık (header) ---------- */
+.ust{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));
+  background:rgba(244,239,230,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--cizgi)}
+.ust .ic{display:flex;align-items:center;gap:24px;min-height:80px;flex-wrap:wrap;padding-block:10px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.logo svg{width:52px;height:40px;flex:none}
+.logo-yazi{display:flex;flex-direction:column;line-height:1}
+.logo-yazi b{font:600 22px/1 var(--font-baslik);color:var(--orman-koyu);letter-spacing:-.01em}
+.logo-yazi b strong{font-weight:800;color:var(--orman)}
+.logo-yazi small{font:700 9.5px/1 var(--font-baslik);letter-spacing:.2em;color:var(--altin);margin-top:5px}
+.menu{display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.menu a{font:600 15px/1 var(--font-baslik);color:var(--orman-koyu);text-decoration:none;padding:10px 14px;border-radius:999px;white-space:nowrap}
+.menu a:hover{background:var(--orman-acik)}
+.btn-panel{height:42px;padding:0 18px;font-size:14px}
+.btn-panel svg{width:16px;height:16px}
+
+/* ---------- Sayfa sistemi (CSS :target) ---------- */
+.sayfa{display:none}
+.sayfa:target{display:block}
+#anasayfa{display:block}
+.sayfa:target ~ #anasayfa{display:none}
+.sayfa:has(:target){display:block}
+.sayfa:has(:target) ~ #anasayfa{display:none}
+#anasayfa:has(:target){display:block}
+.bolum{padding-block:96px}
+.bolum-baslik{display:grid;gap:12px;max-width:720px;margin-bottom:48px}
+.bolum-baslik h2{font-size:clamp(28px,4vw,40px);font-weight:700}
+.bolum-baslik p{color:var(--soluk);font-size:18px}
+.ayirici{border:0;border-top:1px solid var(--cizgi);margin:0}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding-block:72px 88px}
+.hero h1{font-size:clamp(36px,5.4vw,58px);font-weight:800;letter-spacing:-.02em;margin-top:16px}
+.hero h1 em{font-style:normal;color:var(--orman);box-shadow:inset 0 -.22em 0 rgba(217,164,65,.45)}
+.hero-p{margin-top:20px;font-size:19px;color:var(--soluk);max-width:540px}
+.hero-btn{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.kapasite{display:flex;gap:10px;flex-wrap:wrap;margin-top:36px;align-items:center}
+.kapasite span{font:600 13px/1 var(--font-baslik);color:var(--soluk)}
+.kapasite b{font:700 15px/1 var(--font-baslik);color:var(--orman-koyu);background:var(--kagit);border:1px solid var(--cizgi);padding:10px 14px;border-radius:999px;font-variant-numeric:tabular-nums}
+
+/* Ahır panel kartı (hero sağ) */
+.panel-kart{background:var(--orman-koyu);color:var(--krem);border-radius:24px;padding:24px;box-shadow:0 30px 60px rgba(31,63,39,.25);position:relative}
+.pk-ust{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid rgba(244,239,230,.14)}
+.pk-ust h4{color:var(--krem);font-size:17px}
+.pk-ust small{display:block;color:rgba(244,239,230,.65);font-size:13px;margin-top:4px}
+.canli{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-baslik);color:#9CD3A7}
+.canli::before{content:"";width:8px;height:8px;border-radius:50%;background:#7CC68A;box-shadow:0 0 0 4px rgba(124,198,138,.2)}
+.pk-satir{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding-block:14px;border-bottom:1px solid rgba(244,239,230,.1);font-size:14px}
+.pk-satir:last-child{border-bottom:0;padding-bottom:0}
+.pk-satir svg{width:20px;height:20px;color:var(--altin)}
+.pk-satir b{font-family:var(--font-baslik);font-weight:600}
+.pk-satir span{color:rgba(244,239,230,.75);font-variant-numeric:tabular-nums}
+.bar{grid-column:2/4;height:8px;border-radius:99px;background:rgba(244,239,230,.14);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--altin);border-radius:99px}
+.kupe{font:600 12px/1 ui-monospace,"SF Mono",Menlo,monospace;background:rgba(217,164,65,.18);color:var(--altin);padding:5px 8px;border-radius:6px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;font:700 12px/1 var(--font-baslik);padding:6px 10px;border-radius:999px;white-space:nowrap}
+.pill-iyi{background:rgba(124,198,138,.18);color:#9CD3A7}
+.pill-uyari{background:rgba(217,164,65,.2);color:var(--altin)}
+
+/* ---------- Nasıl çalışır ---------- */
+.adimlar{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:adim}
+.adim{background:var(--kagit);border:1px solid var(--cizgi);border-radius:var(--r-kart);padding:28px;display:grid;gap:12px;align-content:start}
+.adim::before{counter-increment:adim;content:counter(adim);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--orman);color:var(--krem);font:700 16px/1 var(--font-baslik)}
+.adim h3{font-size:20px}
+.adim p{color:var(--soluk);font-size:16px}
+
+/* ---------- Avantajlar ---------- */
+.avantaj-bant{background:var(--orman-koyu);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.avantaj-bant .bolum-baslik h2{color:var(--krem)}
+.avantaj-bant .bolum-baslik p{color:rgba(244,239,230,.72)}
+.avantaj-bant .eyebrow{color:var(--altin)}
+.avantajlar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(244,239,230,.12);border-radius:var(--r-kart);overflow:hidden}
+.avantaj{background:var(--orman-koyu);padding:32px 28px;display:grid;gap:10px;align-content:start}
+.avantaj svg{width:32px;height:32px;color:var(--altin)}
+.avantaj h3{color:var(--krem);font-size:19px}
+.avantaj p{color:rgba(244,239,230,.72);font-size:15.5px}
+
+/* ---------- Paketler ---------- */
+.paketler{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+.paket{background:var(--kagit);border:1px solid var(--cizgi);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;gap:20px;position:relative}
+.paket.one{border:2px solid var(--orman);box-shadow:var(--golge)}
+.paket-etiket{position:absolute;top:-13px;left:28px;background:var(--orman);color:var(--krem);font:700 12px/1 var(--font-baslik);letter-spacing:.06em;padding:7px 12px;border-radius:999px}
+.paket-ad{font:800 28px/1 var(--font-baslik);color:var(--orman-koyu)}
+.paket-ozet{color:var(--soluk);font-size:15.5px;margin-top:8px}
+.paket ul{list-style:none;margin:0;padding:0;display:grid;gap:12px;flex:1}
+.paket li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:15.5px;line-height:1.5}
+.paket li svg{width:22px;height:22px;color:var(--orman)}
+.paket .btn{width:100%}
+.ek-hizmetler{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}
+.ek{display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start;padding:24px;border-radius:var(--r-kart);background:var(--orman-acik)}
+.ek .ikon{width:44px;height:44px;border-radius:12px;background:var(--kagit);display:grid;place-items:center}
+.ek .ikon svg{width:22px;height:22px;color:var(--orman)}
+.ek h4{font-size:17px}
+.ek p{font-size:15px;color:var(--soluk);margin-top:4px}
+.ek strong{color:var(--orman)}
+
+
+.paket li.yakinda{color:var(--soluk)}
+.paket li.yakinda svg{color:var(--altin)}
+.paket li.yakinda em{font-style:normal;font:700 11px/1 var(--font-baslik);letter-spacing:.06em;text-transform:uppercase;background:rgba(217,164,65,.2);color:#8A6418;padding:4px 7px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.paket li.yakinda small{display:block;font-size:13px;margin-top:2px}
+.yakinda-h{color:#8A6418;font-weight:700;font-size:13px}
+.ek-izgara{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.ek-yan{display:grid;gap:16px}
+.ek-buyuk{background:var(--kagit);border:1px solid var(--cizgi);padding:28px}
+.ek-buyuk .ikon{background:var(--orman-acik)}
+.ayri{display:inline-block;font:700 11px/1 var(--font-baslik);letter-spacing:.06em;text-transform:uppercase;color:var(--soluk);border:1px solid var(--cizgi);padding:4px 7px;border-radius:999px;margin-left:8px;vertical-align:3px}
+.ek-liste{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.ek-liste li{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:15px;line-height:1.5}
+.ek-liste li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--altin);margin:8px 0 0 4px}
+.destek{margin-top:88px;padding-top:56px;border-top:1px solid var(--cizgi)}
+.destek-izgara{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.destek-kart{background:var(--kagit);border:1px solid var(--cizgi);border-radius:20px;padding:28px;display:grid;gap:14px;min-width:0}
+.destek-tur{justify-self:start;font:700 12px/1 var(--font-baslik);letter-spacing:.06em;text-transform:uppercase;color:var(--orman);background:var(--orman-acik);padding:7px 10px;border-radius:999px}
+.destek-kart h3{font-size:22px}
+.destek-kart dl{margin:0;display:grid}
+.destek-kart dl div{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cizgi)}
+.destek-kart dl div:last-child{border-bottom:0}
+.destek-kart dt{font:700 13.5px/1.4 var(--font-baslik);color:var(--orman-koyu)}
+.destek-kart dd{margin:0;font-size:15px;line-height:1.5}
+.destek-kart{align-content:start}
+.destek-alt{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:6px}
+.kaynak{font:600 14px/1.3 var(--font-baslik);color:var(--orman);overflow-wrap:anywhere}
+/* Karşılaştırma tablosu */
+.tablo-kap{overflow-x:auto;border:1px solid var(--cizgi);border-radius:var(--r-kart);background:var(--kagit);margin-top:48px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{padding:14px 18px;text-align:left;border-bottom:1px solid var(--cizgi)}
+thead th{font:700 13px/1.2 var(--font-baslik);letter-spacing:.06em;text-transform:uppercase;color:var(--soluk);background:var(--krem)}
+tbody tr:last-child td{border-bottom:0}
+.karsi td:not(:first-child),.karsi th:not(:first-child){text-align:center}
+.var{color:var(--orman);font-weight:700}
+.yok{color:#A5A08F}
+
+/* ---------- Bize Ulaşın ---------- */
+.iletisim{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:start}
+.bilgi{display:grid;gap:16px}
+.bilgi-kart{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;padding:18px;border-radius:var(--r-kart);background:var(--kagit);border:1px solid var(--cizgi)}
+.bilgi-kart .ikon{width:44px;height:44px;border-radius:12px;background:var(--orman-acik);display:grid;place-items:center}
+.bilgi-kart svg{width:22px;height:22px;color:var(--orman)}
+.bilgi-kart small{display:block;font:600 12px/1 var(--font-baslik);letter-spacing:.08em;text-transform:uppercase;color:var(--soluk);margin-bottom:6px}
+.bilgi-kart span{font-weight:600;color:var(--orman-koyu);user-select:all;overflow-wrap:anywhere}
+.form{background:var(--kagit);border:1px solid var(--cizgi);border-radius:20px;padding:32px;box-shadow:var(--golge);display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.alan{display:grid;gap:8px;min-width:0}
+.alan.tam{grid-column:1/-1}
+.alan label{font:600 14px/1 var(--font-baslik);color:var(--orman-koyu)}
+.alan input,.alan select,.alan textarea{font:400 16px/1.4 var(--font-govde);color:var(--metin);background:var(--krem);border:1.5px solid var(--cizgi);border-radius:12px;padding:13px 14px;width:100%;min-width:0}
+.alan textarea{min-height:120px;resize:vertical}
+.alan input:focus,.alan select:focus,.alan textarea:focus{outline:none;border-color:var(--orman);background:#fff;box-shadow:0 0 0 4px rgba(47,93,58,.12)}
+.onay{grid-column:1/-1;display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:14.5px;color:var(--soluk);align-items:start}
+.onay input{width:18px;height:18px;margin-top:3px;accent-color:var(--orman)}
+.form .btn{grid-column:1/-1;height:52px}
+
+/* ---------- Sayfa üst bandı (iç sayfalar) ---------- */
+.sayfa-ust{padding-block:64px 48px;border-bottom:1px solid var(--cizgi)}
+.sayfa-ust h1{font-size:clamp(32px,4.6vw,48px);font-weight:800;margin-top:12px}
+.sayfa-ust p{margin-top:14px;color:var(--soluk);font-size:18px;max-width:680px}
+
+/* ---------- Dashboard ---------- */
+.dash-ust{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.not{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--soluk);background:var(--kagit);border:1px dashed var(--cizgi);padding:8px 12px;border-radius:10px}
+.not code{font-size:13px;background:var(--orman-acik);color:var(--orman-koyu);padding:2px 6px;border-radius:5px}
+.kpiler{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+.kpi{background:var(--kagit);border:1px solid var(--cizgi);border-radius:var(--r-kart);padding:20px 22px;display:grid;gap:8px}
+.kpi small{font:600 13px/1.2 var(--font-baslik);color:var(--soluk)}
+.kpi b{font:800 32px/1 var(--font-baslik);color:var(--orman-koyu);font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--soluk)}
+.kpi span.art{color:var(--orman);font-weight:600}
+.dash-izgara{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-top:16px;align-items:start}
+.kutu{background:var(--kagit);border:1px solid var(--cizgi);border-radius:var(--r-kart);padding:22px;min-width:0}
+.kutu h3{font-size:16px}
+.kutu-ust{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.grafik{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:180px;border-bottom:1px solid var(--cizgi);background:linear-gradient(to top,var(--cizgi) 1px,transparent 1px) 0 0/100% 33.33%}
+.grafik div{display:grid;align-items:end;height:100%;position:relative}
+.grafik i{display:block;background:var(--orman);border-radius:6px 6px 0 0;min-height:4px}
+.grafik div:nth-child(4) i{background:var(--altin)}
+.grafik em{position:absolute;left:0;right:0;text-align:center;font:700 12px/1 var(--font-baslik);color:var(--orman-koyu);font-style:normal;font-variant-numeric:tabular-nums}
+.gunler{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:8px;text-align:center;font:600 12px/1 var(--font-baslik);color:var(--soluk)}
+.filtre{display:flex;gap:6px;flex-wrap:wrap}
+.filtre span{font:600 13px/1 var(--font-baslik);padding:8px 12px;border-radius:999px;border:1px solid var(--cizgi);color:var(--soluk)}
+.filtre span.aktif{background:var(--orman);border-color:var(--orman);color:var(--krem)}
+.leads td{font-size:14.5px;vertical-align:top}
+.leads td:first-child{font-weight:700;color:var(--orman-koyu);font-family:var(--font-baslik)}
+.leads td.sayi{font-variant-numeric:tabular-nums;font-weight:600}
+.leads td.mesaj{color:var(--soluk);max-width:300px}
+.leads td.tarih{white-space:nowrap;color:var(--soluk);font-variant-numeric:tabular-nums}
+.leads tbody tr:hover{background:var(--krem)}
+
+/* ---------- KVKK ---------- */
+.kvkk-izgara{display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:start}
+.kvkk-icerik{position:sticky;top:100px;display:grid;gap:2px;font-size:14px}
+.kvkk-icerik b{font:700 12px/1 var(--font-baslik);letter-spacing:.1em;text-transform:uppercase;color:var(--soluk);margin-bottom:10px}
+.kvkk-icerik a{text-decoration:none;color:var(--orman-koyu);padding:7px 10px;border-radius:8px;border-left:2px solid var(--cizgi)}
+.kvkk-icerik a:hover{background:var(--orman-acik);border-left-color:var(--orman)}
+.kvkk-metin{background:var(--kagit);border:1px solid var(--cizgi);border-radius:20px;padding:clamp(24px,4vw,48px);max-width:780px;display:grid;gap:14px;min-width:0}
+.kvkk-metin h3{font-size:20px;margin-top:18px;display:flex;gap:12px;align-items:baseline;scroll-margin-top:100px}
+.kvkk-metin h3:first-of-type{margin-top:6px}
+.kv-n{color:var(--altin);font-weight:800;font-variant-numeric:tabular-nums}
+.kvkk-metin p{font-size:16px}
+.kv-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--cizgi)}
+.kv-row b{font-family:var(--font-baslik);color:var(--orman-koyu);font-size:14px}
+.kv-row span{overflow-wrap:anywhere}
+.kv-list{margin:0;padding-left:20px;display:grid;gap:8px;font-size:16px}
+.kv-list li::marker{color:var(--orman)}
+
+/* ---------- Footer ---------- */
+.alt{background:var(--orman-koyu);color:rgba(244,239,230,.8);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:56px 32px;font-size:15px}
+.alt-izgara{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
+.alt .logo-yazi b{color:var(--krem)}
+.alt .logo-yazi b strong{color:var(--altin)}
+.alt h4{color:var(--krem);font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.alt a{color:rgba(244,239,230,.85);text-decoration:none;display:block;padding:4px 0}
+.alt a:hover{color:var(--altin)}
+.alt-alt{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(244,239,230,.14);margin-top:40px;padding-top:24px;font-size:13.5px;color:rgba(244,239,230,.6)}
+
+/* ---------- AI Asistan (sabit buton + sağ panel) ---------- */
+#asistan-ac{position:fixed;opacity:0;pointer-events:none}
+.fab{position:fixed;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;align-items:center;gap:10px;cursor:pointer;
+  background:var(--orman);color:var(--krem);height:64px;padding:0 22px 0 8px;border-radius:999px;box-shadow:0 12px 30px rgba(31,63,39,.35);font:700 15px/1 var(--font-baslik);transition:transform .2s,background .2s}
+.fab:hover{transform:translateY(-2px);background:var(--orman-koyu)}
+.fab-ikon{width:48px;height:48px;border-radius:50%;background:var(--krem);display:grid;place-items:center;position:relative}
+.fab-ikon svg{width:34px;height:26px}
+.fab-ikon::after{content:"";position:absolute;right:1px;top:1px;width:11px;height:11px;border-radius:50%;background:var(--altin);border:2px solid var(--orman)}
+#asistan-ac:focus-visible + .fab{outline:3px solid var(--altin);outline-offset:3px}
+.perde{position:fixed;inset:0;z-index:80;background:rgba(31,63,39,.28);opacity:0;pointer-events:none;transition:opacity .3s}
+.sohbet{position:fixed;top:0;right:0;bottom:0;z-index:90;width:min(420px,100%);display:flex;flex-direction:column;
+  background:rgba(255,253,248,.82);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+  border-left:1px solid rgba(255,255,255,.6);box-shadow:-20px 0 60px rgba(31,63,39,.2);transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+#asistan-ac:checked ~ .sohbet{transform:none}
+#asistan-ac:checked ~ .perde{opacity:1;pointer-events:auto}
+#asistan-ac:checked ~ .fab{opacity:0;pointer-events:none}
+.s-ust{display:flex;align-items:center;gap:12px;padding:18px 20px;background:var(--orman);color:var(--krem)}
+.s-ust .fab-ikon{width:44px;height:44px;flex:none}
+.s-ust h4{color:var(--krem);font-size:16px}
+.s-ust small{display:block;font-size:12.5px;color:rgba(244,239,230,.75);margin-top:3px}
+.kapat{margin-left:auto;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--krem);background:rgba(244,239,230,.12)}
+.kapat:hover{background:rgba(244,239,230,.24)}
+.kapat svg{width:18px;height:18px}
+.s-govde{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msj{max-width:85%;padding:12px 14px;border-radius:16px;font-size:15px;line-height:1.5}
+.msj.bot{background:var(--kagit);border:1px solid var(--cizgi);border-bottom-left-radius:4px;align-self:flex-start}
+.msj.kul{background:var(--orman);color:var(--krem);border-bottom-right-radius:4px;align-self:flex-end}
+.hizli{display:flex;gap:8px;flex-wrap:wrap}
+.hizli span{font:600 13px/1 var(--font-baslik);padding:9px 12px;border-radius:999px;border:1.5px solid var(--orman);color:var(--orman);background:var(--kagit)}
+.lead-kart{background:var(--kagit);border:1px solid var(--cizgi);border-radius:16px;padding:14px;display:grid;gap:10px;align-self:stretch}
+.lead-kart b{font:700 14px/1.3 var(--font-baslik);color:var(--orman-koyu)}
+.lead-kart .satir{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lead-kart input{font:400 14px/1.3 var(--font-govde);border:1.5px solid var(--cizgi);background:var(--krem);border-radius:10px;padding:10px;width:100%;min-width:0;color:var(--metin)}
+.lead-kart .btn{height:40px;font-size:14px}
+.lead-kart small{font-size:12px;color:var(--soluk)}
+.s-alt{display:flex;gap:8px;padding:14px 16px;border-top:1px solid var(--cizgi);background:rgba(255,253,248,.9)}
+.s-alt input{flex:1;min-width:0;font:400 15px/1.3 var(--font-govde);border:1.5px solid var(--cizgi);border-radius:999px;padding:12px 16px;background:#fff;color:var(--metin)}
+.s-alt .btn{height:46px;padding:0 20px}
+
+/* ---------- Duyarlı (tablet / mobil) ---------- */
+@media (max-width:1000px){
+  .hero{grid-template-columns:1fr;gap:48px;padding-block:48px 64px}
+  .adimlar,.paketler,.ek-hizmetler,.ek-izgara,.destek-izgara{grid-template-columns:1fr}
+  .avantajlar{grid-template-columns:1fr 1fr}
+  .iletisim{grid-template-columns:1fr}
+  .kpiler{grid-template-columns:1fr 1fr}
+  .dash-izgara{grid-template-columns:1fr}
+  .kvkk-izgara{grid-template-columns:1fr}
+  .kvkk-icerik{position:static;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .kvkk-icerik b{grid-column:1/-1}
+  .alt-izgara{grid-template-columns:1fr 1fr}
+  .bolum{padding-block:64px}
+}
+@media (max-width:750px){
+  .ust .ic{gap:8px;min-height:64px}
+  .menu{order:3;width:100%;margin-inline:-6px}
+  .logo svg{width:42px;height:32px}
+  .logo-yazi b{font-size:19px}
+  .avantajlar{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr;padding:22px}
+  .kpiler{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi b{font-size:26px}
+  .alt-izgara{grid-template-columns:1fr}
+  .kv-row{grid-template-columns:1fr;gap:2px}
+  .destek-kart dl div{grid-template-columns:1fr;gap:2px}
+  .bolum{padding-block:48px}
+  .fab{height:56px;padding:0 6px}
+  .fab-metin{display:none}
+  .fab-ikon{width:44px;height:44px}
+  .sohbet{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<!-- İkonlar -->
+<svg class="svg-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="koyun" viewBox="28 54 154 116">
+      <rect x="60" y="128" width="8" height="40" rx="4" fill="var(--k-koyu,#1F3F27)"/><rect x="78" y="128" width="8" height="40" rx="4" fill="var(--k-koyu,#1F3F27)"/><rect x="108" y="128" width="8" height="40" rx="4" fill="var(--k-koyu,#1F3F27)"/><rect x="126" y="128" width="8" height="40" rx="4" fill="var(--k-koyu,#1F3F27)"/>
+      <g fill="var(--k-yun,#2F5D3A)"><circle cx="56" cy="104" r="25"/><circle cx="85" cy="86" r="28"/><circle cx="116" cy="90" r="27"/><circle cx="76" cy="120" r="24"/><circle cx="108" cy="122" r="24"/><circle cx="134" cy="106" r="19"/></g>
+      <ellipse cx="164" cy="113" rx="13.5" ry="27" transform="rotate(-28 164 113)" fill="var(--k-koyu,#1F3F27)"/>
+      <circle cx="153" cy="89" r="12" fill="var(--k-yun,#2F5D3A)"/><circle cx="165" cy="90" r="8" fill="var(--k-yun,#2F5D3A)"/>
+      <ellipse cx="148" cy="108" rx="13" ry="5.5" transform="rotate(22 148 108)" fill="var(--k-koyu,#1F3F27)"/>
+      <circle cx="143" cy="113" r="5" fill="#D9A441"/><circle cx="167" cy="109" r="3.1" fill="var(--k-goz,#F4EFE6)"/>
+    </symbol>
+    <symbol id="i-tik" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".14"/><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5" rx="1.5"/><rect x="13.5" y="11" width="7.5" height="10" rx="1.5"/><rect x="3" y="15" width="7.5" height="6" rx="1.5"/></g></symbol>
+    <symbol id="i-yem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-2 7H8z"/><path d="M8 10v8a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3v-8"/></g></symbol>
+    <symbol id="i-su" viewBox="0 0 24 24"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-kalp" viewBox="0 0 24 24"><path d="M3 12h4l2-4 3 8 2-5 1.5 1H21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-isci" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4l5 5M21 4l-5 5"/></g></symbol>
+    <symbol id="i-ahir" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 10l9-6 9 6v11H3z"/><path d="M9 21v-6h6v6M9 15l6 6M15 15l-6 6"/></g></symbol>
+    <symbol id="i-kalkan" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></g></symbol>
+    <symbol id="i-olcek" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V14M10 20V9M16 20V12M22 20V4"/></g></symbol>
+    <symbol id="i-tek" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></g></symbol>
+    <symbol id="i-odeme" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M2.5 10.5h19M6 15h4"/></g></symbol>
+    <symbol id="i-anahtar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 1 0 3 3l3.3-3.3-3-3z"/><path d="M11 13l-8 8M6 18l2 2"/></g></symbol>
+    <symbol id="i-saman" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V8M12 8c0-3 2-5 5-5 0 3-2 5-5 5zM12 12c0-3-2-5-5-5 0 3 2 5 5 5zM12 16c0-3 2-5 5-5 0 3-2 5-5 5z"/></g></symbol>
+    <symbol id="i-belge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></g></symbol>
+    <symbol id="i-konum" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></g></symbol>
+    <symbol id="i-tel" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-posta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></g></symbol>
+    <symbol id="i-saat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+    <symbol id="i-gubre" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16h9l3-4"/><path d="M14 4l3 8M17 12l3-1"/><path d="M6 19.5v-3M10 19.5v-3"/></g></symbol>
+    <symbol id="i-yz" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></g></symbol>
+    <symbol id="i-tasi" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="12" height="9" rx="1"/><path d="M14 10h4l3 3v3h-7"/><circle cx="6.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></g></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="ust">
+  <div class="ic">
+    <a class="logo" href="#anasayfa" aria-label="Dijital Çoban ana sayfa">
+      <svg><use href="#koyun"/></svg>
+      <span class="logo-yazi"><b>Dijital <strong>Çoban</strong></b><small>AKILLI AHIR ÇÖZÜMLERİ</small></span>
+    </a>
+    <nav class="menu" aria-label="Ana menü">
+      <a href="#anasayfa">Ana Sayfa</a>
+      <a href="#urunler">Ürünlerimiz</a>
+      <a href="#iletisim">Bize Ulaşın</a>
+      <a href="#kvkk">KVKK</a>
+    </nav>
+    <a class="btn btn-ana btn-panel" href="#dashboard"><svg><use href="#i-panel"/></svg>Dashboard</a>
+  </div>
+</header>
+
+<main>
+<!-- ================= ÜRÜNLERİMİZ ================= -->
+<section class="sayfa" id="urunler" aria-label="Ürünlerimiz">
+  <div class="sayfa-ust"><div class="ic">
+    <span class="eyebrow">Ürünlerimiz</span>
+    <h1>Modüler akıllı ahır paketleri</h1>
+    <p>Her paket; taşınabilir modüler ahırı, otomatik yem, su ve gübre temizleme sistemini, yerinde kurulumu ve 1 yıl garantiyi içerir. Modül sayısını ihtiyacınıza göre belirlersiniz.</p>
+  </div></div>
+  <div class="bolum"><div class="ic">
+    <div class="paketler">
+      <article class="paket">
+        <div><div class="paket-ad">Lite</div><p class="paket-ozet">Temel otomasyonlu, modüler ahır.</p></div>
+        <ul>
+          <li><svg><use href="#i-tik"/></svg>Taşınabilir, modüler ahır (büyütülebilir / küçültülebilir)</li>
+          <li><svg><use href="#i-tik"/></svg>Otomatik yemleme sistemi</li>
+          <li><svg><use href="#i-tik"/></svg>Otomatik su sistemi</li>
+          <li><svg><use href="#i-tik"/></svg>Otomatik gübre temizleme sistemi</li>
+          <li><svg><use href="#i-tik"/></svg>Yerinde kurulum ve devreye alma</li>
+          <li><svg><use href="#i-tik"/></svg>1 yıl garanti</li>
+        </ul>
+        <a class="btn btn-cizgi" href="#iletisim">Teklif Al</a>
+      </article>
+      <article class="paket one">
+        <span class="paket-etiket">YAPAY ZEKÂ DESTEKLİ</span>
+        <div><div class="paket-ad">Pro</div><p class="paket-ozet">Lite'taki her şey, artı yapay zekâ destekli izleme paneli.</p></div>
+        <ul>
+          <li><svg><use href="#i-tik"/></svg>Lite paketindeki tüm özellikler</li>
+          <li><svg><use href="#i-tik"/></svg>Yapay zekâ destekli TV / tablet izleme paneli</li>
+          <li><svg><use href="#i-tik"/></svg>Yem, su ve gübre temizleme sistemlerinin anlık takibi</li>
+          <li><svg><use href="#i-tik"/></svg>Olağan dışı tüketim ve arıza için akıllı uyarılar</li>
+          <li><svg><use href="#i-tik"/></svg>Ahırı uzaktan izleme</li>
+          <li><svg><use href="#i-tik"/></svg>1 yıl garanti</li>
+        </ul>
+        <a class="btn btn-ana" href="#iletisim">Teklif Al</a>
+      </article>
+      <article class="paket">
+        <div><div class="paket-ad">Platinum</div><p class="paket-ozet">Ahırdan hayvana, anahtar teslim.</p></div>
+        <ul>
+          <li><svg><use href="#i-tik"/></svg>Pro paketindeki tüm özellikler</li>
+          <li><svg><use href="#i-tik"/></svg>Sabitleme ve ilaçlama bölmesi</li>
+          <li><svg><use href="#i-tik"/></svg>Veteriner raporlu 50 baş başlangıç sürüsü</li>
+          <li><svg><use href="#i-tik"/></svg>Ahırdan hayvana tek elden teslim</li>
+          <li class="yakinda"><svg><use href="#i-saat"/></svg><span>Çip tabanlı sağlık izleme <em>Yakında</em><small>Yasal izin süreci tamamlandığında eklenecek.</small></span></li>
+          <li><svg><use href="#i-tik"/></svg>1 yıl garanti</li>
+        </ul>
+        <a class="btn btn-cizgi" href="#iletisim">Teklif Al</a>
+      </article>
+    </div>
+
+    <div class="tablo-kap">
+      <table class="karsi">
+        <thead><tr><th>Özellik</th><th>Lite</th><th>Pro</th><th>Platinum</th></tr></thead>
+        <tbody>
+          <tr><td>Taşınabilir modüler ahır + kurulum</td><td class="var">✓</td><td class="var">✓</td><td class="var">✓</td></tr>
+          <tr><td>Otomatik yem ve su</td><td class="var">✓</td><td class="var">✓</td><td class="var">✓</td></tr>
+          <tr><td>Otomatik gübre temizleme</td><td class="var">✓</td><td class="var">✓</td><td class="var">✓</td></tr>
+          <tr><td>Yapay zekâ destekli TV / tablet izleme paneli</td><td class="yok">–</td><td class="var">✓</td><td class="var">✓</td></tr>
+          <tr><td>Sabitleme ve ilaçlama bölmesi</td><td class="yok">–</td><td class="yok">–</td><td class="var">✓</td></tr>
+          <tr><td>50 baş başlangıç sürüsü</td><td class="yok">–</td><td class="yok">–</td><td class="var">✓</td></tr>
+          <tr><td>Çip tabanlı sağlık izleme</td><td class="yok">–</td><td class="yok">–</td><td class="yakinda-h">Yakında</td></tr>
+          <tr><td>Garanti</td><td>1 yıl</td><td>1 yıl</td><td>1 yıl</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bolum-baslik" style="margin:72px 0 32px"><span class="eyebrow">Ek hizmetler</span><h2>Ahırınız kurulduktan sonra da yanınızdayız</h2></div>
+    <div class="ek-izgara">
+      <div class="ek ek-buyuk">
+        <div class="ikon"><svg><use href="#i-anahtar"/></svg></div>
+        <div><h4>Bakım Paketi <small class="ayri">Ayrıca satın alınır</small></h4>
+          <ul class="ek-liste">
+            <li>Otomatik yem sisteminin periyodik bakımı ve kalibrasyonu</li>
+            <li>Su hattı, suluk ve filtrelerin kontrolü ve temizliği</li>
+            <li>Gübre temizleme sisteminin (sıyırıcı, motor, zincir) bakımı ve yağlaması</li>
+            <li>Elektrik, sensör ve kontrol ünitesi kontrolü</li>
+            <li>Modül bağlantılarının ve taşıma aksamının kontrolü</li>
+            <li>İzleme paneli yazılım güncellemeleri (Pro ve Platinum)</li>
+            <li>3 ayda bir saha ziyareti, arızada öncelikli servis ve yedek parça</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ek-yan">
+        <div class="ek"><div class="ikon"><svg><use href="#i-kalkan"/></svg></div><div><h4>Garanti</h4><p>Tüm paketlerde <strong>1 yıl</strong>. Otomatik yem, su ve gübre temizleme sistemlerinde ve panel donanımında arızalanan parça yenisiyle değiştirilir.</p></div></div>
+        <div class="ek"><div class="ikon"><svg><use href="#i-saman"/></svg></div><div><h4>Saman ve Yonca Tedariği</h4><p>Tüm yetiştiricilere satış yapıyoruz. Ahır müşterilerimize <strong>%5 indirim</strong>.</p></div></div>
+        <div class="ek"><div class="ikon"><svg><use href="#i-belge"/></svg></div><div><h4>Hibe ve Destek Bilgilendirme</h4><p>Devlet destekleri hakkında bilgi verir, başvuru sürecinde yardımcı oluruz. Sonuç ilgili kurumlara bağlıdır.</p></div></div>
+      </div>
+    </div>
+
+    <div class="destek" id="destekler">
+      <div class="bolum-baslik" style="margin-bottom:28px"><span class="eyebrow">Hibe ve destek rehberi</span><h2>Hayvancılığa başlayanlar için devlet destekleri</h2><p>Hangi desteğe uygun olduğunuzu birlikte belirleyelim.</p></div>
+      <div class="destek-izgara">
+        <article class="destek-kart">
+          <span class="destek-tur">Hayvan + bakım desteği</span>
+          <h3>Kırsalda Bereket, Küçükbaşa Destek</h3>
+          <dl>
+            <div><dt>Ne veriliyor</dt><dd>95 dişi + 5 erkek, toplam 100 baş küçükbaş</dd></div>
+            <div><dt>Bakım-besleme desteği</dt><dd>12 ay boyunca, 3 ayda bir 45.000 TL (yılda 180.000 TL)</dd></div>
+            <div><dt>Sigorta</dt><dd>İlk yıl TARSİM sigortası devlet tarafından karşılanır</dd></div>
+            <div><dt>Kimler alabilir</dt><dd>Türk vatandaşı üreticiler ve yeni başlayanlar; 41 yaş altı ve kadın üreticilere ek puan</dd></div>
+            <div><dt>Durum</dt><dd>Program 2026–2028 boyunca devam ediyor</dd></div>
+          </dl>
+          <div class="destek-alt"><a class="btn btn-ana" href="#iletisim">Bizimle iletişime geçin</a><a class="kaynak" href="https://www.tarimorman.gov.tr/HAYGEM/Haber/454/Kirsalda-Bereket-Kucukbasa-Destek-Projesi-Basliyor" target="_blank" rel="noopener">Kaynak: Tarım ve Orman Bakanlığı</a></div>
+        </article>
+        <article class="destek-kart">
+          <span class="destek-tur">Hibe</span>
+          <h3>Kırsal Kalkınma Yatırım Programı</h3>
+          <dl>
+            <div><dt>Hibe oranı</dt><dd>Proje bedelinin %50–70'i (kadın, genç ve kırsal projelere %60; eğitimli gençlere %70)</dd></div>
+            <div><dt>Otomasyon</dt><dd>Otomasyon ve yenilenebilir enerji yatırımlarına +%5</dd></div>
+            <div><dt>Proje tutarı</dt><dd>100.000 TL ile 30 milyon TL arası (aile işletmelerinde 8 milyon TL)</dd></div>
+            <div><dt>Kapsam</dt><dd>Büyükbaş, küçükbaş ve kanatlı yetiştiriciliği dahil</dd></div>
+            <div><dt>Geri ödeme</dt><dd>Hibe kısmı geri ödenmez; kalan payı yatırımcı karşılar</dd></div>
+          </dl>
+          <div class="destek-alt"><a class="btn btn-ana" href="#iletisim">Bizimle iletişime geçin</a><a class="kaynak" href="https://www.alomaliye.com/2026/04/30/kirsal-kalkinma-yatirim-programi-2026-basvuru-donemi-basladi/" target="_blank" rel="noopener">Kaynak: Kırsal Kalkınma Yatırım Programı 2026</a></div>
+        </article>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ================= DASHBOARD ================= -->
+<section class="sayfa" id="dashboard" aria-label="Dashboard">
+  <div class="sayfa-ust"><div class="ic dash-ust">
+    <div><span class="eyebrow">Yönetim Paneli</span><h1>Müşteri talepleri</h1></div>
+    <div class="dash-giris"><input type="password" id="adminKey" placeholder="Yönetici anahtarı" autocomplete="current-password" aria-label="Yönetici anahtarı"><button class="btn btn-ana" type="button" id="adminGiris">Giriş</button><button class="btn btn-cizgi" type="button" id="adminCikis" hidden>Çıkış</button><span class="not" id="dashDurum">Talepleri görmek için yönetici anahtarını girin.</span></div>
+  </div></div>
+  <div class="bolum" style="padding-top:8px"><div class="ic">
+    <div class="kpiler">
+      <div class="kpi"><small>Toplam talep</small><b id="kpiToplam">–</b><span>Başlangıçtan bu yana</span></div>
+      <div class="kpi"><small>Son 7 gün</small><b id="kpi7">–</b><span class="art" id="kpi7Fark">&nbsp;</span></div>
+      <div class="kpi"><small>Ortalama hayvan sayısı</small><b id="kpiOrt">–</b><span>baş / talep</span></div>
+      <div class="kpi"><small>Talep edilen toplam kapasite</small><b id="kpiKap">–</b><span>baş</span></div>
+    </div>
+    <div class="dash-izgara">
+      <div class="kutu">
+        <div class="kutu-ust"><h3>Son 7 gün</h3><span class="not" style="padding:4px 8px;font-size:12px">günlük talep</span></div>
+        <div class="grafik" id="grafik" aria-label="Son 7 gün günlük talep sayısı"></div>
+        <div class="gunler" id="gunler"></div>
+      </div>
+      <div class="kutu">
+        <div class="kutu-ust"><h3>Son talepler</h3>
+          <div class="filtre"><span class="aktif">Tümü</span><span data-aralik="0-50">≤50 baş</span><span data-aralik="51-150">51–150 baş</span><span data-aralik="151-1000000">150+ baş</span></div>
+        </div>
+        <div style="overflow-x:auto">
+        <table class="leads" id="leadsTablo">
+          <thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan sayısı</th><th>Mesaj</th><th>Tarih</th></tr></thead>
+          <tbody id="leadsGovde"><tr><td colspan="5">Yönetici girişi bekleniyor.</td></tr></tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ================= KVKK ================= -->
+<section class="sayfa" id="kvkk" aria-label="KVKK">
+  <div class="sayfa-ust"><div class="ic">
+    <span class="eyebrow">Yasal</span>
+    <h1>Kişisel Verilerin Korunması ve İşlenmesi Politikası</h1>
+    <p>Dijital Çoban Tarım Teknolojileri Limited Şirketi · 6698 sayılı KVKK kapsamında aydınlatma metni</p>
+  </div></div>
+  <div class="bolum"><div class="ic kvkk-izgara">
+    <nav class="kvkk-icerik" aria-label="KVKK içindekiler">
+      <b>İçindekiler</b>
+      <a href="#kvkk-1">1. Veri Sorumlusu</a><a href="#kvkk-2">2. İşlenen Kişisel Veriler</a><a href="#kvkk-3">3. Kişisel Verilerin İşlenme Amaçları</a><a href="#kvkk-4">4. Kişisel Verilerin Toplanma Yöntemleri ve Hukuki Sebepler</a><a href="#kvkk-5">5. Kişisel Verilerin Aktarımı</a><a href="#kvkk-6">6. Kişisel Verilerin Saklanması ve Korunması</a><a href="#kvkk-7">7. İlgili Kişinin Hakları</a><a href="#kvkk-8">8. Çerez (Cookie) Politikası</a><a href="#kvkk-9">9. Politika Güncellemeleri</a><a href="#kvkk-10">10. Yürürlük</a>
+    </nav>
+    <article class="kvkk-metin">
+      <p>Dijital Çoban Tarım Teknolojileri Limited Şirketi (“Dijital Çoban”) olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) kapsamında kişisel verilerinizin gizliliğini ve güvenliğini sağlamak temel önceliklerimiz arasındadır. Bu politika, https://furkanduman1925.wixsite.com/dijital adresli internet sitemiz, yapay zekâ destekli sohbet asistanımız ve sunduğumuz hizmetler aracılığıyla elde edilen kişisel verilerin hangi amaçlarla işlendiğini, nasıl saklandığını ve nasıl korunduğunu açıklamak amacıyla hazırlanmıştır.</p>
+<h3 id="kvkk-1"><span class="kv-n">1</span>Veri Sorumlusu</h3>
+<p class="kv-row"><b>Veri Sorumlusu</b><span>Dijital Çoban Tarım Teknolojileri Limited Şirketi</span></p>
+<p class="kv-row"><b>Adres</b><span>Dağıstan Mahallesi, Bergama/İzmir</span></p>
+<p class="kv-row"><b>Telefon</b><span>+90 536 523 7959</span></p>
+<p class="kv-row"><b>E-posta</b><span>dijitalcoban@rinnesoft.com</span></p>
+<h3 id="kvkk-2"><span class="kv-n">2</span>İşlenen Kişisel Veriler</h3>
+<p>Kimlik bilgileri (ad, soyad), iletişim bilgileri (telefon numarası, e-posta adresi), müşteri işlem bilgileri (talep edilen ahır tipi ve paket, teklif ve sözleşme bilgileri, hayvan sayısı ve mevcut ahır durumu gibi işletme bilgileri), finansal bilgiler (teklif, fatura ve ödeme planı bilgileri), sohbet asistanı ile yapılan yazışmalar ve internet kullanım bilgileri (IP adresi, çerez verileri).</p>
+<h3 id="kvkk-3"><span class="kv-n">3</span>Kişisel Verilerin İşlenme Amaçları</h3>
+<p>Hizmet sunumu ve tekliflendirme, ahır ve otomasyon sistemi kurulumu, garanti ve bakım hizmetlerinin yürütülmesi, hayvan temini ile yem ve saman tedarik süreçlerinin yönetilmesi, hibe ve destek başvuru süreçlerinde bilgilendirme ve destek sağlanması, faturalandırma, müşteri iletişimi, taleplerin yapay zekâ destekli sohbet asistanı aracılığıyla yanıtlanması ve iletişim bilgilerinin alınması, hizmet kalitesinin geliştirilmesi, hukuki yükümlülüklerin yerine getirilmesi.</p>
+<p>Yapay zekâ destekli sohbet asistanı: Web sitemizdeki sohbet asistanı ile yaptığınız yazışmalar, taleplerinizi yanıtlamak ve iletişim bilgilerinizi almak amacıyla işlenir. Lütfen sohbet sırasında kimlik numarası, banka veya kart bilgisi gibi bilgileri paylaşmayınız. Asistanın verdiği bilgiler genel bilgilendirme niteliğindedir; teklif veya sözleşme yerine geçmez.</p>
+<h3 id="kvkk-4"><span class="kv-n">4</span>Kişisel Verilerin Toplanma Yöntemleri ve Hukuki Sebepler</h3>
+<p>Kişisel verileriniz; web sitemiz, yapay zekâ destekli sohbet asistanı, telefon, e-posta, yüz yüze görüşmeler ve sosyal medya kanalları aracılığıyla toplanır. Veriler; KVKK’nın 5. maddesinde yer alan sözleşmenin kurulması veya ifasıyla doğrudan ilgili olması, hukuki yükümlülüğün yerine getirilmesi, ilgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla meşru menfaatimiz ve gerekli hâllerde açık rızanız hukuki sebeplerine dayanılarak işlenir.</p>
+<h3 id="kvkk-5"><span class="kv-n">5</span>Kişisel Verilerin Aktarımı</h3>
+<p>Kişisel verileriniz; hizmetin yerine getirilmesi için gerekli olduğu ölçüde ve amaçla sınırlı olarak ahır ve ekipman tedarikçilerimize, kurulum ve nakliye hizmeti verenlere, hayvan temininde anlaşmalı yetiştiricilere, muhasebe firmalarına, bankalara, talebiniz doğrultusunda hibe ve destek başvuruları kapsamında yetkili kamu kurumlarına ve web sitesi, barındırma ve yapay zekâ hizmeti sağlayan teknik hizmet sağlayıcılarına aktarılabilir. Teknik hizmet sağlayıcılarının bir kısmı yurt dışında bulunabilir; yurt dışına aktarım KVKK’nın 9. maddesi ve ilgili mevzuata uygun şekilde gerçekleştirilir.</p>
+<h3 id="kvkk-6"><span class="kv-n">6</span>Kişisel Verilerin Saklanması ve Korunması</h3>
+<p>Kişisel verileriniz, işlenme amaçlarının gerektirdiği süre boyunca ve ilgili mevzuatta öngörülen zamanaşımı ve saklama süreleri dikkate alınarak muhafaza edilmektedir. İşlenme amacının ortadan kalkması veya yasal saklama süresinin sona ermesi halinde kişisel veriler, Dijital Çoban tarafından KVKK’ya ve ilgili mevzuata uygun olarak silinir, yok edilir veya anonim hale getirilir.</p>
+<p>Şirketimiz, kişisel verilerin güvenliğini sağlamak amacıyla gerekli tüm teknik ve idari tedbirleri almaktadır. Bu kapsamda;</p>
+<ul class="kv-list">
+<li>Kişisel verilere yalnızca yetkili personelin erişebilmesi için erişim yetkilendirme sistemleri uygulanmaktadır.</li>
+<li>Verilerin saklandığı dijital ortamlarda güvenlik duvarları, şifreleme yöntemleri ve güncel anti virüs yazılımları kullanılmaktadır.</li>
+<li>Fiziksel ortamlarda saklanan belgeler kilitli dolaplarda muhafaza edilmekte ve yalnızca yetkili kişiler tarafından erişilebilmektedir.</li>
+<li>Çalışanlara, kişisel verilerin korunmasına ilişkin periyodik bilgilendirme ve farkındalık çalışmaları yapılmaktadır.</li>
+<li>Yetkisiz erişim, veri kaybı, veri ifşası veya hukuka aykırı veri işlenmesini önlemek amacıyla gerekli tüm denetim ve kontrol mekanizmaları işletilmektedir.</li>
+</ul>
+<p>Şirketimiz, kişisel verilerin hukuka aykırı olarak işlenmesini veya üçüncü kişiler tarafından erişilmesini önlemek için teknolojik gelişmeleri takip ederek güvenlik önlemlerini sürekli güncel tutmayı taahhüt eder.</p>
+<h3 id="kvkk-7"><span class="kv-n">7</span>İlgili Kişinin Hakları</h3>
+<p>6698 sayılı Kişisel Verilerin Korunması Kanunu’nun 11. maddesi uyarınca, kişisel verileri işlenen herkes (ilgili kişi) aşağıdaki haklara sahiptir:</p>
+<ul class="kv-list">
+<li>Kişisel verilerinin işlenip işlenmediğini öğrenme,</li>
+<li>Kişisel verileri işlenmişse buna ilişkin bilgi talep etme,</li>
+<li>Kişisel verilerin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme,</li>
+<li>Kişisel verilerinin yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme,</li>
+<li>Kişisel verilerinin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme,</li>
+<li>KVKK ve ilgili mevzuat hükümlerine uygun olarak kişisel verilerinin silinmesini, yok edilmesini veya anonim hâle getirilmesini isteme,
+Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme,</li>
+<li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin aleyhine bir sonucun ortaya çıkmasına itiraz etme,</li>
+<li>Kişisel verilerinin kanuna aykırı olarak işlenmesi sebebiyle zarara uğraması hâlinde zararın giderilmesini talep etme.</li>
+</ul>
+<p>İlgili kişiler, yukarıda sayılan haklarını kullanmak için taleplerini yazılı olarak veya Kişisel Verileri Koruma Kurulu’nun belirlediği diğer yöntemlerle Dijital Çoban Tarım Teknolojileri Limited Şirketi’ne iletebilirler.</p>
+<p>Başvurular, veri sorumlusu tarafından en geç otuz (30) gün içerisinde ücretsiz olarak sonuçlandırılır. Ancak işlemin ayrıca bir maliyet gerektirmesi hâlinde, Kişisel Verileri Koruma Kurulu tarafından belirlenen tarifedeki ücret talep edilebilir.</p>
+<p>Başvurular şu iletişim kanalları üzerinden yapılabilir:</p>
+<p class="kv-row"><b>E-posta</b><span>dijitalcoban@rinnesoft.com</span></p>
+<h3 id="kvkk-8"><span class="kv-n">8</span>Çerez (Cookie) Politikası</h3>
+<p>Web sitemiz, kullanıcı deneyimini geliştirmek, hizmetlerimizi daha etkin sunabilmek ve internet sitesinin güvenli bir şekilde çalışmasını sağlamak amacıyla çerezler kullanmaktadır.</p>
+<p>Çerezler; bir internet sitesini ziyaret ettiğinizde bilgisayarınızda, tabletinizde veya mobil cihazınızda saklanan küçük metin dosyalarıdır.</p>
+<p>Çerezler aracılığıyla elde edilen veriler; web sitemizin kullanımını analiz etmek, kullanıcı tercihlerini hatırlamak, site performansını artırmak ve kullanıcıya daha hızlı ve güvenli bir hizmet sunmak amacıyla kullanılmaktadır.</p>
+<p>Bu kapsamda:</p>
+<ul class="kv-list">
+<li>Zorunlu çerezler: Web sitemizin çalışması için gereklidir.</li>
+<li>Performans ve analiz çerezleri: Site kullanım istatistiklerini anonim olarak ölçer.</li>
+<li>İşlevsellik çerezleri: Kullanıcı tercihlerini hatırlar.</li>
+</ul>
+<p>Kullanıcılar tarayıcı ayarları üzerinden çerezleri kontrol edebilir. Çerezlerin kapatılması bazı hizmetlerin düzgün çalışmamasına yol açabilir.</p>
+<h3 id="kvkk-9"><span class="kv-n">9</span>Politika Güncellemeleri</h3>
+<p>Bu politika, mevzuat değişiklikleri ve şirket uygulamaları doğrultusunda güncellenebilir.</p>
+<p>Güncel politika metni her zaman https://furkanduman1925.wixsite.com/dijital adresinde yayımlanır.</p>
+<p>Web sitesinde yayımlandığı tarihten itibaren geçerlidir.</p>
+<h3 id="kvkk-10"><span class="kv-n">10</span>Yürürlük</h3>
+<p>İşbu politika yayımlandığı tarihte yürürlüğe girer ve Dijital Çoban Tarım Teknolojileri Limited Şirketi tarafından yürütülen tüm kişisel veri işleme faaliyetleri için bağlayıcıdır.</p>
+    </article>
+  </div></div>
+</section>
+
+<!-- ================= ANA SAYFA (DOM'da en sonda; varsayılan görünür) ================= -->
+<section class="sayfa" id="anasayfa" aria-label="Ana sayfa">
+  <div class="ic hero">
+    <div>
+      <span class="eyebrow">Taşınabilir · Modüler · Otomatik</span>
+      <h1>Emeği azaltan, <em>sürünüzle büyüyen</em> ahır.</h1>
+      <p class="hero-p">Otomatik yem, otomatik su ve otomatik gübre temizleme sistemiyle gelen akıllı ahır. Taşınabilir yapısıyla kurulur, modül ekleyip çıkararak büyütülür ya da küçültülür.</p>
+      <div class="hero-btn">
+        <a class="btn btn-ana" href="#urunler">Paketleri İncele</a>
+        <a class="btn btn-cizgi" href="#iletisim">Bize Ulaşın</a>
+      </div>
+    </div>
+    <div class="panel-kart" aria-label="Ahır izleme paneli">
+      <div class="pk-ust"><div><h4>Prototip Ahır · Bergama</h4><small>3 modül · Pro paket</small></div><span class="canli">Canlı</span></div>
+      <div class="pk-satir"><svg><use href="#i-yem"/></svg><b>Yem silosu</b><span>%72</span><div class="bar"><i style="width:72%"></i></div></div>
+      <div class="pk-satir"><svg><use href="#i-su"/></svg><b>Su hattı</b><span class="pill pill-iyi">Normal</span></div>
+      <div class="pk-satir"><svg><use href="#i-gubre"/></svg><b>Gübre temizleme</b><span>Sonraki 18:00</span></div>
+      <div class="pk-satir"><svg><use href="#i-yz"/></svg><b>Yapay zekâ notu</b><span class="pill pill-uyari">Su tüketimi %18 düştü</span></div>
+      <div class="pk-satir"><svg><use href="#i-ahir"/></svg><b>Ahır sıcaklığı</b><span>14 °C</span></div>
+    </div>
+  </div>
+
+  <hr class="ayirici">
+
+  <div class="bolum"><div class="ic">
+    <div class="bolum-baslik"><span class="eyebrow">Nasıl çalışır</span><h2>Üç adımda akıllı ahır</h2><p>Görüşmeden devreye almaya kadar süreci tek ekip yürütür.</p></div>
+    <div class="adimlar">
+      <div class="adim"><h3>Keşif ve modül planı</h3><p>Arazinizi, hayvan sayınızı ve hedefinizi konuşuruz. Kaç modülle başlayacağınızı ve size uygun paketi birlikte belirleriz.</p></div>
+      <div class="adim"><h3>Kurulum</h3><p>Taşınabilir modülleri arazinizde birleştirir; yem, su ve gübre temizleme sistemlerini aynı ekiple bağlarız.</p></div>
+      <div class="adim"><h3>Devreye alma ve büyüme</h3><p>Sistemi birlikte çalıştırır, paneli kullanmayı gösteririz. Sürünüz büyüdükçe yeni modül ekler, gerekirse ahırı taşırız.</p></div>
+    </div>
+  </div></div>
+
+  <div class="avantaj-bant"><div class="bolum"><div class="ic">
+    <div class="bolum-baslik"><span class="eyebrow">Avantajlarımız</span><h2>Neden Dijital Çoban?</h2><p>İnsan gücünü azaltan teknolojiyle hayvancılığı daha kolay ve daha cazip hale getiriyoruz.</p></div>
+    <div class="avantajlar">
+      <div class="avantaj"><svg><use href="#i-isci"/></svg><h3>Daha az iş gücü</h3><p>Yem, su ve gübre temizleme otomatik; günlük ahır işleri azalır.</p></div>
+      <div class="avantaj"><svg><use href="#i-tasi"/></svg><h3>Taşınabilir</h3><p>Ahır sabit bir binaya bağlı değildir; arazi değiştirirseniz sizinle gelir.</p></div>
+      <div class="avantaj"><svg><use href="#i-olcek"/></svg><h3>Büyür ve küçülür</h3><p>Modül ekleyerek büyütür, modül çıkararak küçültürsünüz.</p></div>
+      <div class="avantaj"><svg><use href="#i-gubre"/></svg><h3>Daha temiz ahır</h3><p>Otomatik gübre temizleme, hijyeni ve hayvan konforunu artırır.</p></div>
+      <div class="avantaj"><svg><use href="#i-kalkan"/></svg><h3>1 yıl garanti</h3><p>Garanti süresince arızalanan parçayı yenisiyle değiştiririz.</p></div>
+      <div class="avantaj"><svg><use href="#i-odeme"/></svg><h3>Esnek ödeme</h3><p>Taksit seçenekleri için bizimle iletişime geçin.</p></div>
+    </div>
+  </div></div></div>
+
+  <div class="bolum" id="iletisim"><div class="ic">
+    <div class="bolum-baslik"><span class="eyebrow">Bize Ulaşın</span><h2>Ahırınızı birlikte planlayalım</h2><p>Formu doldurun, sizi arayıp modül planı ve paket için ücretsiz ön görüşme yapalım.</p></div>
+    <div class="iletisim">
+      <div class="bilgi">
+        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-konum"/></svg></div><div><small>Adres</small><span>Dağıstan Mahallesi, Bergama / İzmir</span></div></div>
+        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-tel"/></svg></div><div><small>Telefon</small><span>+90 536 523 7959</span></div></div>
+        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-posta"/></svg></div><div><small>E-posta</small><span>dijitalcoban@rinnesoft.com</span></div></div>
+        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-saat"/></svg></div><div><small>Çalışma saatleri</small><span>Hafta içi 09:00 – 18:00</span></div></div>
+      </div>
+      <form class="form" id="iletisimForm" onsubmit="return false">
+        <div class="alan"><label for="isim">Ad Soyad</label><input id="isim" name="isim" autocomplete="name" placeholder="Örn. Mehmet Aydın"></div>
+        <div class="alan"><label for="telefon">Telefon</label><input id="telefon" name="telefon" type="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div>
+        <div class="alan"><label for="hayvan_sayisi">Hayvan sayısı</label><input id="hayvan_sayisi" name="hayvan_sayisi" type="number" min="1" placeholder="Örn. 100"></div>
+        <div class="alan"><label for="paket">İlgilendiğiniz paket</label><select id="paket" name="paket"><option>Henüz karar vermedim</option><option>Lite</option><option>Pro</option><option>Platinum</option></select></div>
+        <div class="alan tam"><label for="mesaj">Mesajınız</label><textarea id="mesaj" name="mesaj" placeholder="Arazi büyüklüğü, konum veya sorularınız"></textarea></div>
+        <label class="onay" for="kvkkOnay"><input id="kvkkOnay" type="checkbox"><span><a href="#kvkk">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini kabul ediyorum.</span></label>
+        <button class="btn btn-ana" type="button" id="gonderButon">Gönder</button>
+      </form>
+    </div>
+  </div></div>
+</section>
+</main>
+
+<footer class="alt"><div class="ic">
+  <div class="alt-izgara">
+    <div style="display:grid;gap:14px;align-content:start">
+      <a class="logo" href="#anasayfa" style="--k-yun:#F4EFE6;--k-koyu:#D9C9A8;--k-goz:#1F3F27"><svg><use href="#koyun"/></svg><span class="logo-yazi"><b>Dijital <strong>Çoban</strong></b><small>AKILLI AHIR ÇÖZÜMLERİ</small></span></a>
+      <p style="max-width:320px">Otomatik yem, su ve gübre temizleme sistemli, taşınabilir ve modüler akıllı ahır çözümleri.</p>
+    </div>
+    <div><h4>Sayfalar</h4><a href="#anasayfa">Ana Sayfa</a><a href="#urunler">Ürünlerimiz</a><a href="#iletisim">Bize Ulaşın</a><a href="#dashboard">Dashboard</a></div>
+    <div><h4>İletişim</h4><span style="display:block;padding:4px 0">+90 536 523 7959</span><span style="display:block;padding:4px 0;overflow-wrap:anywhere">dijitalcoban@rinnesoft.com</span><span style="display:block;padding:4px 0">Bergama / İzmir</span></div>
+  </div>
+  <div class="alt-alt"><span>© 2026 Dijital Çoban Tarım Teknolojileri Ltd. Şti.</span><a href="#kvkk" style="display:inline;padding:0">KVKK Aydınlatma Metni</a></div>
+</div></footer>
+
+<!-- ================= AI ASİSTAN ================= -->
+<input type="checkbox" id="asistan-ac" aria-label="AI asistanı aç/kapat">
+<label class="fab" for="asistan-ac"><span class="fab-ikon"><svg><use href="#koyun"/></svg></span><span class="fab-metin">Asistana sor</span></label>
+<label class="perde" for="asistan-ac" aria-hidden="true"></label>
+<aside class="sohbet" aria-label="Dijital Çoban Asistanı">
+  <div class="s-ust">
+    <span class="fab-ikon"><svg><use href="#koyun"/></svg></span>
+    <div><h4>Dijital Çoban Asistanı</h4><small>Yapay zekâ destekli asistan</small></div>
+    <label class="kapat" for="asistan-ac" title="Kapat"><svg><use href="#i-x"/></svg></label>
+  </div>
+  <div class="s-govde" id="yanitAlani">
+    <div class="msj bot">Merhaba! Ben Dijital Çoban asistanıyım. Modüler ahır, paketler, kurulum ve devlet destekleri hakkında sorularınızı yanıtlayabilirim.</div>
+    <div class="hizli"><span>Paketleri karşılaştır</span><span>Modül ekleme</span><span>Hibe bilgisi</span></div>
+    <div class="lead-kart">
+      <b>Sizi arayalım</b>
+      <div class="satir"><input id="sIsim" placeholder="Ad Soyad" aria-label="Ad Soyad"><input id="sTelefon" placeholder="Telefon" aria-label="Telefon"></div>
+      <input id="sHayvan" placeholder="Hayvan sayısı" aria-label="Hayvan sayısı">
+      <button class="btn btn-altin" type="button" id="kaydetButon">Kaydet</button>
+      <small>Bilgileriniz KVKK kapsamında yalnızca bu talep için işlenir.</small>
+    </div>
+  </div>
+  <div class="s-alt">
+    <input id="mesajInput" placeholder="Sorunuzu yazın…" aria-label="Mesaj">
+    <button class="btn btn-ana" type="button" id="sorButon">Sor</button>
+  </div>
+</aside>
+
+<script>
+/* Dijital Çoban – site ↔ SmartLead API bağlantısı (sohbet, teklif formu, yönetim paneli) */
+(function () {
+  // Site Render'dan veya yerelden açılıyorsa aynı adres; başka yerden (Wix, dosya) açılıyorsa Render adresi
+  var ayniSunucu = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || /onrender\.com$/.test(location.hostname);
+  var API = ayniSunucu ? '' : 'https://smartlead-kc49.onrender.com';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function istek(yol, secenek) {
+    secenek = secenek || {};
+    secenek.headers = Object.assign({ 'Content-Type': 'application/json' }, secenek.headers || {});
+    return fetch(API + yol, secenek).then(function (r) {
+      return r.json().catch(function () { return { basari: false, hata: 'Sunucu yanıtı okunamadı (' + r.status + ').' }; })
+        .then(function (v) { v._durum = r.status; return v; });
+    });
+  }
+
+  /* ---------------- Sohbet ---------------- */
+  var gecmis = [];
+  var govde = $('yanitAlani');
+  var leadKart = govde ? govde.querySelector('.lead-kart') : null;
+  function balon(metin, sinif) {
+    var d = document.createElement('div');
+    d.className = 'msj ' + sinif;
+    d.textContent = metin;
+    govde.insertBefore(d, leadKart);
+    govde.scrollTop = govde.scrollHeight;
+    return d;
+  }
+  function sor(metin) {
+    var girdi = $('mesajInput');
+    var mesaj = (metin || girdi.value).trim();
+    if (!mesaj) return;
+    girdi.value = '';
+    balon(mesaj, 'kul');
+    var bekle = balon('Yazıyor…', 'bot');
+    $('sorButon').disabled = true;
+    istek('/api/sohbet', { method: 'POST', body: JSON.stringify({ mesaj: mesaj, gecmis: gecmis }) })
+      .then(function (v) {
+        bekle.textContent = v.basari ? v.cevap : (v.hata || 'Bir sorun oluştu.');
+        if (v.basari) { gecmis.push({ role: 'user', content: mesaj }, { role: 'assistant', content: v.cevap }); gecmis = gecmis.slice(-10); }
+      })
+      .catch(function () { bekle.textContent = 'Sunucuya ulaşılamadı. Birkaç saniye sonra tekrar deneyin.'; })
+      .then(function () { $('sorButon').disabled = false; });
+  }
+  if (govde) {
+    $('sorButon').addEventListener('click', function () { sor(); });
+    $('mesajInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') sor(); });
+    govde.querySelectorAll('.hizli span').forEach(function (s) {
+      s.style.cursor = 'pointer';
+      s.addEventListener('click', function () { sor(s.textContent); });
+    });
+    $('kaydetButon').addEventListener('click', function () {
+      var veri = { isim: $('sIsim').value, telefon: $('sTelefon').value, hayvan_sayisi: $('sHayvan').value, mesaj: 'Sohbet asistanı üzerinden geri arama talebi' };
+      istek('/api/leads', { method: 'POST', body: JSON.stringify(veri) })
+        .then(function (v) { balon(v.basari ? v.mesaj : v.hata, 'bot'); if (v.basari) { $('sIsim').value = $('sTelefon').value = $('sHayvan').value = ''; } })
+        .catch(function () { balon('Sunucuya ulaşılamadı.', 'bot'); });
+    });
+  }
+
+  /* ---------------- Teklif formu ---------------- */
+  var form = $('iletisimForm');
+  if (form) {
+    var sonuc = document.createElement('p');
+    sonuc.className = 'form-sonuc';
+    form.appendChild(sonuc);
+    $('gonderButon').addEventListener('click', function () {
+      if (!$('kvkkOnay').checked) { sonuc.textContent = 'Lütfen KVKK Aydınlatma Metni onayını işaretleyin.'; sonuc.dataset.tur = 'hata'; return; }
+      var veri = { isim: $('isim').value, telefon: $('telefon').value, hayvan_sayisi: $('hayvan_sayisi').value, paket: $('paket').value, mesaj: $('mesaj').value };
+      $('gonderButon').disabled = true;
+      istek('/api/leads', { method: 'POST', body: JSON.stringify(veri) })
+        .then(function (v) { sonuc.textContent = v.basari ? v.mesaj : v.hata; sonuc.dataset.tur = v.basari ? 'ok' : 'hata'; if (v.basari) form.reset(); })
+        .catch(function () { sonuc.textContent = 'Sunucuya ulaşılamadı.'; sonuc.dataset.tur = 'hata'; })
+        .then(function () { $('gonderButon').disabled = false; });
+    });
+  }
+
+  /* ---------------- Yönetim paneli ---------------- */
+  var ANAHTAR = 'dc_admin_key';
+  var leadler = [];
+  var aralik = null;
+  var zamanlayici = null;
+  function anahtarOku() { try { return sessionStorage.getItem(ANAHTAR) || ''; } catch (e) { return ''; } }
+  function anahtarYaz(v) { try { v ? sessionStorage.setItem(ANAHTAR, v) : sessionStorage.removeItem(ANAHTAR); } catch (e) {} }
+  function durum(metin) { $('dashDurum').textContent = metin; }
+  function tarihCoz(s) { return new Date(String(s).replace(' ', 'T') + 'Z'); }   // SQLite UTC
+  function iki(n) { return (n < 10 ? '0' : '') + n; }
+
+  function girisDurumu(acik) {
+    $('adminKey').hidden = acik; $('adminGiris').hidden = acik; $('adminCikis').hidden = !acik;
+  }
+
+  function yukle() {
+    var key = anahtarOku();
+    if (!key) { girisDurumu(false); durum('Talepleri görmek için yönetici anahtarını girin.'); return; }
+    durum('Yükleniyor… (sunucu uykudaysa 30–60 sn sürebilir)');
+    istek('/api/leads', { headers: { 'X-Admin-Token': key } })
+      .then(function (v) {
+        if (!v.basari) {
+          if (v._durum === 401) { anahtarYaz(''); girisDurumu(false); }
+          durum(v.hata || 'Veri alınamadı.');
+          return;
+        }
+        girisDurumu(true);
+        leadler = v.leadler;
+        ciz();
+        var s = new Date();
+        durum('Canlı veri · ' + iki(s.getHours()) + ':' + iki(s.getMinutes()) + ' itibarıyla · dakikada bir yenilenir');
+        clearTimeout(zamanlayici);
+        zamanlayici = setTimeout(yukle, 60000);
+      })
+      .catch(function () { durum('Sunucuya ulaşılamadı.'); });
+  }
+
+  function ciz() {
+    var simdi = new Date();
+    var gun = 864e5;
+    var bugun = new Date(simdi.getFullYear(), simdi.getMonth(), simdi.getDate());
+    var yedi = leadler.filter(function (l) { return tarihCoz(l.tarih) >= new Date(bugun - 6 * gun); }).length;
+    var onceki = leadler.filter(function (l) { var t = tarihCoz(l.tarih); return t >= new Date(bugun - 13 * gun) && t < new Date(bugun - 6 * gun); }).length;
+    var hayvanli = leadler.filter(function (l) { return l.hayvan_sayisi != null; });
+    var kapasite = hayvanli.reduce(function (t, l) { return t + l.hayvan_sayisi; }, 0);
+    $('kpiToplam').textContent = leadler.length;
+    $('kpi7').textContent = yedi;
+    var fark = yedi - onceki;
+    $('kpi7Fark').textContent = 'Önceki haftaya göre ' + (fark >= 0 ? '+' : '') + fark;
+    $('kpiOrt').textContent = hayvanli.length ? Math.round(kapasite / hayvanli.length) : '–';
+    $('kpiKap').textContent = kapasite.toLocaleString('tr-TR');
+
+    // son 7 gün grafiği
+    var adlar = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+    var sayilar = [], etiketler = [];
+    for (var i = 6; i >= 0; i--) {
+      var bas = new Date(bugun - i * gun), son = new Date(bugun - (i - 1) * gun);
+      sayilar.push(leadler.filter(function (l) { var t = tarihCoz(l.tarih); return t >= bas && t < son; }).length);
+      etiketler.push(adlar[bas.getDay()]);
+    }
+    var enCok = Math.max.apply(null, sayilar.concat([1]));
+    var grafik = $('grafik');
+    grafik.replaceChildren();
+    sayilar.forEach(function (n) {
+      var d = document.createElement('div'), cubuk = document.createElement('i'), em = document.createElement('em');
+      var yuzde = n / enCok * 100;
+      cubuk.style.height = yuzde + '%';
+      cubuk.style.background = (n === enCok && n > 0) ? 'var(--altin)' : 'var(--orman)';
+      em.textContent = n;
+      em.style.bottom = yuzde > 85 ? 'calc(' + yuzde + '% - 18px)' : 'calc(' + yuzde + '% + 6px)';
+      d.append(cubuk, em);
+      grafik.appendChild(d);
+    });
+    var gunler = $('gunler');
+    gunler.replaceChildren();
+    etiketler.forEach(function (e) { var s = document.createElement('span'); s.textContent = e; gunler.appendChild(s); });
+
+    // tablo (textContent: kullanıcı verisi HTML olarak çalıştırılmaz)
+    var tb = $('leadsGovde');
+    tb.replaceChildren();
+    var liste = leadler.filter(function (l) {
+      if (!aralik) return true;
+      return l.hayvan_sayisi != null && l.hayvan_sayisi >= aralik[0] && l.hayvan_sayisi <= aralik[1];
+    });
+    if (!liste.length) {
+      var tr0 = document.createElement('tr'), td0 = document.createElement('td');
+      td0.colSpan = 5; td0.textContent = 'Kayıt yok.'; tr0.appendChild(td0); tb.appendChild(tr0);
+    }
+    liste.forEach(function (l) {
+      var t = tarihCoz(l.tarih);
+      var hucreler = [[l.isim, ''], [l.telefon, ''], [l.hayvan_sayisi != null ? l.hayvan_sayisi : '–', 'sayi'], [l.mesaj || '–', 'mesaj'],
+        [iki(t.getDate()) + '.' + iki(t.getMonth() + 1) + ' ' + iki(t.getHours()) + ':' + iki(t.getMinutes()), 'tarih']];
+      var tr = document.createElement('tr');
+      hucreler.forEach(function (h) { var td = document.createElement('td'); td.textContent = h[0]; if (h[1]) td.className = h[1]; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+
+  if ($('dashboard')) {
+    $('adminGiris').addEventListener('click', function () {
+      var key = $('adminKey').value.trim();
+      if (!key) return;
+      durum('Kontrol ediliyor…');
+      istek('/api/admin/giris', { method: 'POST', headers: { 'X-Admin-Token': key } })
+        .then(function (v) {
+          if (!v.basari) { durum(v.hata); return; }
+          anahtarYaz(key); $('adminKey').value = ''; yukle();
+        })
+        .catch(function () { durum('Sunucuya ulaşılamadı.'); });
+    });
+    $('adminKey').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('adminGiris').click(); });
+    $('adminCikis').addEventListener('click', function () {
+      anahtarYaz(''); leadler = []; clearTimeout(zamanlayici); ciz(); girisDurumu(false);
+      ['kpiToplam', 'kpi7', 'kpiOrt', 'kpiKap'].forEach(function (id) { $(id).textContent = '–'; });
+      durum('Çıkış yapıldı.');
+    });
+    document.querySelectorAll('#dashboard .filtre span').forEach(function (s) {
+      s.style.cursor = 'pointer';
+      s.addEventListener('click', function () {
+        document.querySelectorAll('#dashboard .filtre span').forEach(function (x) { x.classList.remove('aktif'); });
+        s.classList.add('aktif');
+        aralik = s.dataset.aralik ? s.dataset.aralik.split('-').map(Number) : null;
+        ciz();
+      });
+    });
+    yukle();
+  }
+})();
+</script>
+
+</body></html>

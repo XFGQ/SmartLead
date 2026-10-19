@@ -5,5 +5,4 @@ COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 EXPOSE 5000
-# Smoke test icin hello.py; proje hazir olunca: CMD ["python", "run.py"]
-CMD ["python", "hello.py"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "run:app"]
