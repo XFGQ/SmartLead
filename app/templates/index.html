@@ -343,6 +343,75 @@ tbody tr:last-child td{border-bottom:0}
   .sohbet{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* ---------- Ana sayfa: tarla defteri düzeni ---------- */
+.kenar-not{display:block;font:600 12px/1 ui-monospace,"SF Mono",Consolas,monospace;letter-spacing:.08em;color:var(--altin);margin-bottom:10px}
+.defter{position:relative;padding-block:56px 0;overflow:hidden}
+.defter-ust{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--cizgi)}
+.defter-ust .kenar-not{margin:0}
+.defter-koyun{position:absolute;right:-40px;top:70px;width:min(520px,60vw);height:auto;aspect-ratio:154/116;opacity:.07;pointer-events:none}
+.manset{position:relative;display:grid;margin:40px 0 0;font-size:clamp(40px,7.4vw,96px);font-weight:800;letter-spacing:-.035em;line-height:.98}
+.manset .m1{justify-self:start}
+.manset .m2{justify-self:end;text-align:right}
+.manset .m2 em{font-style:normal;color:var(--orman);background:linear-gradient(transparent 72%,rgba(217,164,65,.5) 72%)}
+.manset .m3{justify-self:start;padding-left:18%}
+.defter-alt{display:grid;grid-template-columns:auto minmax(0,440px);justify-content:space-between;align-items:end;gap:32px;margin-top:44px}
+.defter-alt .hero-btn{margin:0}
+.defter-p{font-size:17px;color:var(--soluk);border-left:3px solid var(--altin);padding-left:18px}
+.cetvel{display:grid;grid-template-columns:repeat(4,1fr);margin:56px 0 0;border-top:1px solid var(--orman-koyu)}
+.cetvel div{padding:18px 18px 22px 0;border-right:1px dashed var(--cizgi)}
+.cetvel div+div{padding-left:18px}
+.cetvel div:last-child{border-right:0}
+.cetvel dt{font:700 12px/1 var(--font-baslik);letter-spacing:.12em;text-transform:uppercase;color:var(--soluk)}
+.cetvel dd{margin:8px 0 0;font:700 18px/1.25 var(--font-baslik);color:var(--orman-koyu)}
+
+.yan-yana{display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:64px;align-items:start}
+.yan-baslik{position:sticky;top:120px;display:grid;gap:12px}
+.yan-baslik h2{font-size:clamp(28px,3.6vw,40px)}
+.yan-baslik p{color:var(--soluk)}
+.satirlar{list-style:none;margin:0;padding:0;border-top:1px solid var(--orman-koyu)}
+.satirlar li{display:grid;grid-template-columns:96px 1fr;column-gap:24px;row-gap:6px;padding:28px 0;border-bottom:1px solid var(--cizgi)}
+.satirlar .no{grid-row:span 2;font:800 52px/1 var(--font-baslik);color:transparent;-webkit-text-stroke:1.5px var(--orman)}
+.satirlar h3{font-size:22px}
+.satirlar p{color:var(--soluk)}
+
+.bolunmus-baslik{display:grid;grid-template-columns:1fr minmax(0,420px);gap:32px;align-items:end;padding-bottom:28px;margin-bottom:8px;border-bottom:1px solid rgba(244,239,230,.18)}
+.bolunmus-baslik h2{color:var(--krem);font-size:clamp(28px,4vw,44px);margin-top:12px}
+.bolunmus-baslik p{color:rgba(244,239,230,.72);font-size:17px}
+.bolunmus-baslik .eyebrow{color:var(--altin)}
+.avantaj-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+.avantaj-liste li{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:26px 0;border-bottom:1px solid rgba(244,239,230,.12)}
+.avantaj-liste svg{width:30px;height:30px;color:var(--altin);margin-top:2px}
+.avantaj-liste h3{color:var(--krem);font-size:19px}
+.avantaj-liste p{color:rgba(244,239,230,.72);font-size:15.5px;margin-top:4px}
+
+.iletisim-ters{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:start}
+.iletisim-yan{display:grid;gap:12px}
+.iletisim-yan h2{font-size:clamp(28px,3.6vw,40px)}
+.iletisim-yan>p{color:var(--soluk)}
+.kunye{margin:20px 0 0;border-top:1px solid var(--orman-koyu)}
+.kunye div{display:grid;grid-template-columns:130px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--cizgi)}
+.kunye dt{font:700 12px/1.6 var(--font-baslik);letter-spacing:.1em;text-transform:uppercase;color:var(--soluk)}
+.kunye dd{margin:0;font-weight:600;color:var(--orman-koyu);overflow-wrap:anywhere}
+.kunye a{color:inherit;text-decoration:none;border-bottom:1px solid var(--altin)}
+
+@media (max-width:900px){
+  .defter-alt{grid-template-columns:1fr}
+  .cetvel{grid-template-columns:1fr 1fr}
+  .cetvel div:nth-child(2){border-right:0}
+  .cetvel div:nth-child(3){padding-left:0;border-top:1px dashed var(--cizgi)}
+  .cetvel div:nth-child(4){border-top:1px dashed var(--cizgi)}
+  .yan-yana,.iletisim-ters,.bolunmus-baslik{grid-template-columns:1fr;gap:28px}
+  .yan-baslik{position:static}
+  .avantaj-liste{grid-template-columns:1fr}
+  .iletisim-yan{order:-1}
+  .manset .m3{padding-left:0}
+}
+@media (max-width:520px){
+  .satirlar li{grid-template-columns:64px 1fr}
+  .satirlar .no{font-size:38px}
+  .kunye div{grid-template-columns:1fr;gap:2px}
+  .manset .m2{justify-self:start;text-align:left}
+}
 </style>
 
 <!-- İkonlar -->
@@ -630,67 +699,86 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
 
 <!-- ================= ANA SAYFA (DOM'da en sonda; varsayılan görünür) ================= -->
 <section class="sayfa" id="anasayfa" aria-label="Ana sayfa">
-  <div class="ic hero">
-    <div>
+  <!-- Hero: tarla defteri düzeni, asimetrik manşet -->
+  <header class="ic defter">
+    <div class="defter-ust">
+      <span class="kenar-not">No. 01 · Bergama / İzmir</span>
       <span class="eyebrow">Taşınabilir · Modüler · Otomatik</span>
-      <h1>Emeği azaltan, <em>sürünüzle büyüyen</em> ahır.</h1>
-      <p class="hero-p">Otomatik yem, otomatik su ve otomatik gübre temizleme sistemiyle gelen akıllı ahır. Taşınabilir yapısıyla kurulur, modül ekleyip çıkararak büyütülür ya da küçültülür.</p>
+    </div>
+    <svg class="defter-koyun" aria-hidden="true"><use href="#koyun"/></svg>
+    <h1 class="manset">
+      <span class="m1">Emeği azaltan,</span>
+      <span class="m2"><em>sürünüzle büyüyen</em></span>
+      <span class="m3">ahır.</span>
+    </h1>
+    <div class="defter-alt">
       <div class="hero-btn">
         <a class="btn btn-ana" href="#urunler">Paketleri İncele</a>
         <a class="btn btn-cizgi" href="#iletisim">Bize Ulaşın</a>
       </div>
+      <p class="defter-p">Otomatik yem, otomatik su ve otomatik gübre temizleme sistemiyle gelen akıllı ahır. Taşınabilir yapısıyla kurulur, modül ekleyip çıkararak büyütülür ya da küçültülür.</p>
     </div>
-    <div class="panel-kart" aria-label="Ahır izleme paneli">
-      <div class="pk-ust"><div><h4>Prototip Ahır · Bergama</h4><small>3 modül · Pro paket</small></div><span class="canli">Canlı</span></div>
-      <div class="pk-satir"><svg><use href="#i-yem"/></svg><b>Yem silosu</b><span>%72</span><div class="bar"><i style="width:72%"></i></div></div>
-      <div class="pk-satir"><svg><use href="#i-su"/></svg><b>Su hattı</b><span class="pill pill-iyi">Normal</span></div>
-      <div class="pk-satir"><svg><use href="#i-gubre"/></svg><b>Gübre temizleme</b><span>Sonraki 18:00</span></div>
-      <div class="pk-satir"><svg><use href="#i-yz"/></svg><b>Yapay zekâ notu</b><span class="pill pill-uyari">Su tüketimi %18 düştü</span></div>
-      <div class="pk-satir"><svg><use href="#i-ahir"/></svg><b>Ahır sıcaklığı</b><span>14 °C</span></div>
-    </div>
-  </div>
+    <dl class="cetvel">
+      <div><dt>Otomatik</dt><dd>Yem · Su · Gübre</dd></div>
+      <div><dt>Taşınabilir</dt><dd>Arazinizle birlikte gelir</dd></div>
+      <div><dt>Garanti</dt><dd>Tüm paketlerde 1 yıl</dd></div>
+      <div><dt>Paketler</dt><dd>Lite · Pro · Platinum</dd></div>
+    </dl>
+  </header>
 
-  <hr class="ayirici">
-
-  <div class="bolum"><div class="ic">
-    <div class="bolum-baslik"><span class="eyebrow">Nasıl çalışır</span><h2>Üç adımda akıllı ahır</h2><p>Görüşmeden devreye almaya kadar süreci tek ekip yürütür.</p></div>
-    <div class="adimlar">
-      <div class="adim"><h3>Keşif ve modül planı</h3><p>Arazinizi, hayvan sayınızı ve hedefinizi konuşuruz. Kaç modülle başlayacağınızı ve size uygun paketi birlikte belirleriz.</p></div>
-      <div class="adim"><h3>Kurulum</h3><p>Taşınabilir modülleri arazinizde birleştirir; yem, su ve gübre temizleme sistemlerini aynı ekiple bağlarız.</p></div>
-      <div class="adim"><h3>Devreye alma ve büyüme</h3><p>Sistemi birlikte çalıştırır, paneli kullanmayı gösteririz. Sürünüz büyüdükçe yeni modül ekler, gerekirse ahırı taşırız.</p></div>
+  <!-- Nasıl çalışır: başlık solda sabit, adımlar sağda çizgili satırlar -->
+  <div class="bolum"><div class="ic yan-yana">
+    <div class="yan-baslik">
+      <span class="kenar-not">No. 02</span>
+      <span class="eyebrow">Nasıl çalışır</span>
+      <h2>Üç adımda akıllı ahır</h2>
+      <p>Görüşmeden devreye almaya kadar süreci tek ekip yürütür.</p>
     </div>
+    <ol class="satirlar">
+      <li><span class="no">01</span><h3>Keşif ve modül planı</h3><p>Arazinizi, hayvan sayınızı ve hedefinizi konuşuruz. Kaç modülle başlayacağınızı ve size uygun paketi birlikte belirleriz.</p></li>
+      <li><span class="no">02</span><h3>Kurulum</h3><p>Taşınabilir modülleri arazinizde birleştirir; yem, su ve gübre temizleme sistemlerini aynı ekiple bağlarız.</p></li>
+      <li><span class="no">03</span><h3>Devreye alma ve büyüme</h3><p>Sistemi birlikte çalıştırır, paneli kullanmayı gösteririz. Sürünüz büyüdükçe yeni modül ekler, gerekirse ahırı taşırız.</p></li>
+    </ol>
   </div></div>
 
+  <!-- Avantajlar: başlık ikiye bölünmüş (h2 sol, açıklama sağ), liste iki sütun -->
   <div class="avantaj-bant"><div class="bolum"><div class="ic">
-    <div class="bolum-baslik"><span class="eyebrow">Avantajlarımız</span><h2>Neden Dijital Çoban?</h2><p>İnsan gücünü azaltan teknolojiyle hayvancılığı daha kolay ve daha cazip hale getiriyoruz.</p></div>
-    <div class="avantajlar">
-      <div class="avantaj"><svg><use href="#i-isci"/></svg><h3>Daha az iş gücü</h3><p>Yem, su ve gübre temizleme otomatik; günlük ahır işleri azalır.</p></div>
-      <div class="avantaj"><svg><use href="#i-tasi"/></svg><h3>Taşınabilir</h3><p>Ahır sabit bir binaya bağlı değildir; arazi değiştirirseniz sizinle gelir.</p></div>
-      <div class="avantaj"><svg><use href="#i-olcek"/></svg><h3>Büyür ve küçülür</h3><p>Modül ekleyerek büyütür, modül çıkararak küçültürsünüz.</p></div>
-      <div class="avantaj"><svg><use href="#i-gubre"/></svg><h3>Daha temiz ahır</h3><p>Otomatik gübre temizleme, hijyeni ve hayvan konforunu artırır.</p></div>
-      <div class="avantaj"><svg><use href="#i-kalkan"/></svg><h3>1 yıl garanti</h3><p>Garanti süresince arızalanan parçayı yenisiyle değiştiririz.</p></div>
-      <div class="avantaj"><svg><use href="#i-odeme"/></svg><h3>Esnek ödeme</h3><p>Taksit seçenekleri için bizimle iletişime geçin.</p></div>
+    <div class="bolunmus-baslik">
+      <div><span class="kenar-not">No. 03</span><span class="eyebrow">Avantajlarımız</span><h2>Neden Dijital Çoban?</h2></div>
+      <p>İnsan gücünü azaltan teknolojiyle hayvancılığı daha kolay ve daha cazip hale getiriyoruz.</p>
     </div>
+    <ul class="avantaj-liste">
+      <li><svg><use href="#i-isci"/></svg><div><h3>Daha az iş gücü</h3><p>Yem, su ve gübre temizleme otomatik; günlük ahır işleri azalır.</p></div></li>
+      <li><svg><use href="#i-tasi"/></svg><div><h3>Taşınabilir</h3><p>Ahır sabit bir binaya bağlı değildir; arazi değiştirirseniz sizinle gelir.</p></div></li>
+      <li><svg><use href="#i-olcek"/></svg><div><h3>Büyür ve küçülür</h3><p>Modül ekleyerek büyütür, modül çıkararak küçültürsünüz.</p></div></li>
+      <li><svg><use href="#i-gubre"/></svg><div><h3>Daha temiz ahır</h3><p>Otomatik gübre temizleme, hijyeni ve hayvan konforunu artırır.</p></div></li>
+      <li><svg><use href="#i-kalkan"/></svg><div><h3>1 yıl garanti</h3><p>Garanti süresince arızalanan parçayı yenisiyle değiştiririz.</p></div></li>
+      <li><svg><use href="#i-odeme"/></svg><div><h3>Esnek ödeme</h3><p>Taksit seçenekleri için bizimle iletişime geçin.</p></div></li>
+    </ul>
   </div></div></div>
 
-  <div class="bolum" id="iletisim"><div class="ic">
-    <div class="bolum-baslik"><span class="eyebrow">Bize Ulaşın</span><h2>Ahırınızı birlikte planlayalım</h2><p>Formu doldurun, sizi arayıp modül planı ve paket için ücretsiz ön görüşme yapalım.</p></div>
-    <div class="iletisim">
-      <div class="bilgi">
-        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-konum"/></svg></div><div><small>Adres</small><span>Dağıstan Mahallesi, Bergama / İzmir</span></div></div>
-        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-tel"/></svg></div><div><small>Telefon</small><span>+90 536 523 7959</span></div></div>
-        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-posta"/></svg></div><div><small>E-posta</small><span>dijitalcoban@rinnesoft.com</span></div></div>
-        <div class="bilgi-kart"><div class="ikon"><svg><use href="#i-saat"/></svg></div><div><small>Çalışma saatleri</small><span>Hafta içi 09:00 – 18:00</span></div></div>
-      </div>
-      <form class="form" id="iletisimForm" onsubmit="return false">
-        <div class="alan"><label for="isim">Ad Soyad</label><input id="isim" name="isim" autocomplete="name" placeholder="Örn. Mehmet Aydın"></div>
-        <div class="alan"><label for="telefon">Telefon</label><input id="telefon" name="telefon" type="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div>
-        <div class="alan"><label for="hayvan_sayisi">Hayvan sayısı</label><input id="hayvan_sayisi" name="hayvan_sayisi" type="number" min="1" placeholder="Örn. 100"></div>
-        <div class="alan"><label for="paket">İlgilendiğiniz paket</label><select id="paket" name="paket"><option>Henüz karar vermedim</option><option>Lite</option><option>Pro</option><option>Platinum</option></select></div>
-        <div class="alan tam"><label for="mesaj">Mesajınız</label><textarea id="mesaj" name="mesaj" placeholder="Arazi büyüklüğü, konum veya sorularınız"></textarea></div>
-        <label class="onay" for="kvkkOnay"><input id="kvkkOnay" type="checkbox"><span><a href="#kvkk">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini kabul ediyorum.</span></label>
-        <button class="btn btn-ana" type="button" id="gonderButon">Gönder</button>
-      </form>
+  <!-- İletişim: form solda, başlık ve bilgiler sağda -->
+  <div class="bolum" id="iletisim"><div class="ic iletisim-ters">
+    <form class="form" id="iletisimForm" onsubmit="return false">
+      <div class="alan"><label for="isim">Ad Soyad</label><input id="isim" name="isim" autocomplete="name" placeholder="Örn. Mehmet Aydın"></div>
+      <div class="alan"><label for="telefon">Telefon</label><input id="telefon" name="telefon" type="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div>
+      <div class="alan"><label for="hayvan_sayisi">Hayvan sayısı</label><input id="hayvan_sayisi" name="hayvan_sayisi" type="number" min="1" placeholder="Örn. 100"></div>
+      <div class="alan"><label for="paket">İlgilendiğiniz paket</label><select id="paket" name="paket"><option>Henüz karar vermedim</option><option>Lite</option><option>Pro</option><option>Platinum</option></select></div>
+      <div class="alan tam"><label for="mesaj">Mesajınız</label><textarea id="mesaj" name="mesaj" placeholder="Arazi büyüklüğü, konum veya sorularınız"></textarea></div>
+      <label class="onay" for="kvkkOnay"><input id="kvkkOnay" type="checkbox"><span><a href="#kvkk">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini kabul ediyorum.</span></label>
+      <button class="btn btn-ana" type="button" id="gonderButon">Gönder</button>
+    </form>
+    <div class="iletisim-yan">
+      <span class="kenar-not">No. 04</span>
+      <span class="eyebrow">Bize Ulaşın</span>
+      <h2>Ahırınızı birlikte planlayalım</h2>
+      <p>Formu doldurun, sizi arayıp modül planı ve paket için ücretsiz ön görüşme yapalım.</p>
+      <dl class="kunye">
+        <div><dt>Adres</dt><dd>Dağıstan Mahallesi, Bergama / İzmir</dd></div>
+        <div><dt>Telefon</dt><dd><a href="tel:+905365237959">+90 536 523 7959</a></dd></div>
+        <div><dt>E-posta</dt><dd><a href="mailto:dijitalcoban@rinnesoft.com">dijitalcoban@rinnesoft.com</a></dd></div>
+        <div><dt>Çalışma saatleri</dt><dd>Hafta içi 09:00 – 18:00</dd></div>
+      </dl>
     </div>
   </div></div>
 </section>
