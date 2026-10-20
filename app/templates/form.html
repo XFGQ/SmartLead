@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dijital Çoban – İletişim Formu</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--yesil:#2F5D3A;--koyu:#1F3F27;--krem:#F4EFE6;--kart:#FBF8F1;--alan:#F1ECE2;--altin:#D9A441;--gri:#5B6B5F;--hata:#B3402E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:transparent}
+body{font-family:'Open Sans',sans-serif;color:var(--koyu)}
+form{background:var(--kart);border-radius:18px;padding:28px;box-shadow:0 6px 20px rgba(31,63,39,.08)}
+.satir{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px}
+.alan{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.satir .alan{margin-bottom:0}
+label{font-family:Montserrat;font-weight:700;font-size:14px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid #e3dccd;border-radius:10px;background:var(--alan);font:inherit;font-size:15px;color:var(--koyu)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--yesil);outline-offset:1px}
+textarea{min-height:104px;resize:vertical}
+.kvkk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--gri);margin-bottom:18px}
+.kvkk input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--yesil)}
+button{width:100%;padding:15px;border:0;border-radius:999px;background:var(--yesil);color:#fff;font-family:Montserrat;font-weight:700;font-size:16px;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+#durum{margin-top:14px;font-size:15px;text-align:center;min-height:22px}
+#durum.ok{color:var(--yesil);font-weight:600}
+#durum.err{color:var(--hata)}
+@media(max-width:560px){.satir{grid-template-columns:1fr}form{padding:20px}}
+</style>
+</head>
+<body>
+<form id="form" novalidate>
+  <div class="satir">
+    <div class="alan"><label for="isim">Ad Soyad</label><input id="isim" name="isim" placeholder="Örn. Mehmet Aydın" required></div>
+    <div class="alan"><label for="telefon">Telefon</label><input id="telefon" name="telefon" type="tel" placeholder="05xx xxx xx xx" required></div>
+  </div>
+  <div class="satir">
+    <div class="alan"><label for="hayvan">Hayvan sayısı</label><input id="hayvan" name="hayvan" type="number" min="0" placeholder="Örn. 100"></div>
+    <div class="alan"><label for="paket">İlgilendiğiniz paket</label>
+      <select id="paket" name="paket">
+        <option>Henüz karar vermedim</option><option>Lite</option><option>Pro</option><option>Platinum</option>
+      </select>
+    </div>
+  </div>
+  <div class="alan"><label for="mesaj">Mesajınız</label><textarea id="mesaj" name="mesaj" placeholder="Arazi büyüklüğü, konum veya sorularınız"></textarea></div>
+  <label class="kvkk"><input id="kvkk" type="checkbox"> <span>KVKK Aydınlatma Metni'ni okudum, iletişim bilgilerimin bu talep için işlenmesini kabul ediyorum.</span></label>
+  <button id="gonder" type="submit">Gönder</button>
+  <div id="durum" role="status"></div>
+</form>
+<script>
+const f = document.getElementById('form'), d = document.getElementById('durum'), b = document.getElementById('gonder');
+function yaz(t, c){ d.textContent = t; d.className = c || ''; }
+f.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  if (!v('isim') || !v('telefon')) return yaz('Ad soyad ve telefon zorunludur.', 'err');
+  if (!document.getElementById('kvkk').checked) return yaz('Devam etmek için KVKK onayını işaretleyin.', 'err');
+  const veri = {
+    isim: v('isim'),
+    telefon: v('telefon'),
+    hayvan_sayisi: v('hayvan') ? Number(v('hayvan')) : null,
+    paket: v('paket'),
+    mesaj: v('mesaj'),
+    kvkk: true,
+    kaynak: 'iletisim-formu'
+  };
+  b.disabled = true; yaz('Gönderiliyor…');
+  try {
+    const r = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(veri) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.basari !== false) { f.reset(); yaz('Gönderildi! En kısa sürede sizi arayacağız.', 'ok'); }
+    else yaz(j.hata || 'Gönderilemedi, lütfen tekrar deneyin.', 'err');
+  } catch (err) {
+    yaz('Sunucuya ulaşılamadı. Birkaç saniye sonra tekrar deneyin.', 'err');
+  } finally { b.disabled = false; }
+});
+</script>
+</body>
+</html>

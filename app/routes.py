@@ -35,6 +35,12 @@ def yedek_panel():
     return render_template("dashboard.html")
 
 
+@sayfa_bp.get("/form")
+def iletisim_formu():
+    # Wix'e iFrame ile gömülen "Bize Ulaşın" formu
+    return render_template("form.html")
+
+
 @api_bp.post("/sohbet")
 def sohbet():
     veri = request.get_json(silent=True) or {}
