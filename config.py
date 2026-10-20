@@ -34,9 +34,15 @@ Kurallar:
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "gelistirme-anahtari-degistir")
     DATABASE_URL = os.environ.get("DATABASE_URL", "data/smartlead.db")
-    AI_PROVIDER = os.environ.get("AI_PROVIDER", "groq")
+    # Yapay zeka zinciri: sirayla denenir, calismayan atlanir (bkz. app/services/ai_service.py)
+    NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
+    NVIDIA_MODEL = os.environ.get("NVIDIA_MODEL", "deepseek-ai/deepseek-v4.1-flash")
+    NVIDIA_API_KEY_2 = os.environ.get("NVIDIA_API_KEY_2", "")   # bossa NVIDIA_API_KEY kullanilir
+    NVIDIA_MODEL_2 = os.environ.get("NVIDIA_MODEL_2", "openai/gpt-oss-20b")
+    NVIDIA_TIMEOUT = int(os.environ.get("NVIDIA_TIMEOUT", "12"))
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-    GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+    GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
+    GROQ_MODEL_2 = os.environ.get("GROQ_MODEL_2", "qwen/qwen3.8-27b")
     AI_TIMEOUT = int(os.environ.get("AI_TIMEOUT", "20"))
     # Wix site adresi; virgulle birden fazla adres yazilabilir
     CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "*").split(",")]
@@ -57,7 +63,10 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    GROQ_API_KEY = ""  # testler demo modunda calisir, dis servise gitmez
+    # testler demo modunda calisir, dis servise gitmez
+    NVIDIA_API_KEY = ""
+    NVIDIA_API_KEY_2 = ""
+    GROQ_API_KEY = ""
 
 
 config_by_name = {

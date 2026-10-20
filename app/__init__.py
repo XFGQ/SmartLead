@@ -13,8 +13,8 @@ def create_app(config_name=None):
     app = Flask(__name__)
 
     # 1) Ayarlar: development / production / testing
-    config_name = config_name or os.environ.get("FLASK_ENV", "development")
-    app.config.from_object(config_by_name.get(config_name, config_by_name["development"]))
+    config_name = config_name or os.environ.get("FLASK_ENV", "production")  # varsayilan guvenli mod
+    app.config.from_object(config_by_name.get(config_name, config_by_name["production"]))
 
     # 2) CORS: yalnizca /api/* ve yalnizca izin verilen site(ler)
     CORS(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}},

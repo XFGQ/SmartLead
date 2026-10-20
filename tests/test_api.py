@@ -14,6 +14,7 @@ from app.services import ai_service as ai_modul  # noqa: E402
 
 class SmartLeadTest(unittest.TestCase):
     def setUp(self):
+        ai_modul.ai_service._son_hata.clear()
         self.tmp = tempfile.TemporaryDirectory()
         os.environ["DATABASE_URL"] = os.path.join(self.tmp.name, "test.db")
         import config
@@ -67,6 +68,22 @@ class SmartLeadTest(unittest.TestCase):
         gonderilen = cagri.call_args.kwargs["json"]["messages"]
         self.assertEqual([m["role"] for m in gonderilen], ["system", "user"])  # sahte system mesaji atlandi
 
+    def test_sohbet_yedek_modele_gecer(self):
+        self.app.config.update(NVIDIA_API_KEY="nvapi_test", GROQ_API_KEY="gsk_test")
+        sahte = mock.Mock()
+        sahte.json.return_value = {"choices": [{"message": {"content": "<think>x</think> Groq yanıtı"}}]}
+        sahte.raise_for_status.return_value = None
+
+        def cagri(url, **kw):
+            if "nvidia" in url:
+                raise ai_modul.requests.Timeout("yavas")
+            return sahte
+        with mock.patch.object(ai_modul.requests, "post", side_effect=cagri) as c:
+            r = self.c.post("/api/sohbet", json={"mesaj": "Merhaba"})
+        self.assertEqual(r.get_json()["cevap"], "Groq yanıtı")
+        denenen = [k.kwargs["json"]["model"] for k in c.call_args_list]
+        self.assertEqual(denenen, ["deepseek-ai/deepseek-v4.1-flash", "openai/gpt-oss-20b", "openai/gpt-oss-120b"])
+
     def test_lead_kaydet_ve_listele(self):
         r = self.c.post("/api/leads", json={"isim": "Mehmet Aydın", "telefon": "0532 123 45 27",
                                              "hayvan_sayisi": "120", "mesaj": "Pro teklif"})
@@ -103,6 +120,21 @@ class SmartLeadTest(unittest.TestCase):
     def test_uretimde_anahtarsiz_liste_kapali(self):
         self.app.config.update(TESTING=False, DEBUG=False, ADMIN_TOKEN="")
         self.assertEqual(self.c.get("/api/leads").status_code, 503)
+
+    def test_varsayilan_mod_uretim(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("FLASK_ENV", None)
+            app = create_app()
+        self.assertFalse(app.config["DEBUG"])
+        self.assertFalse(app.config["TESTING"])
+
+    def test_postgres_sorgu_cevirisi(self):
+        from app import database
+        with self.app.app_context():
+            self.app.config["DATABASE_URL"] = "postgresql://k:s@host/db"
+            self.assertEqual(database._sql("VALUES (?, ?)"), "VALUES (%s, %s)")
+            self.app.config["DATABASE_URL"] = "data/x.db"
+            self.assertEqual(database._sql("VALUES (?, ?)"), "VALUES (?, ?)")
 
     def test_paket_mesaja_eklenir(self):
         self.c.post("/api/leads", json={"isim": "Ali", "telefon": "05321234567", "paket": "Pro", "mesaj": "Bergama"})
