@@ -30,6 +30,7 @@ def create_app(config_name=None):
 
     @app.get("/health")
     def health():
-        return jsonify({"durum": "ok"})
+        from app.database import postgres_mu
+        return jsonify({"durum": "ok", "veritabani": "postgresql" if postgres_mu() else "sqlite"})
 
     return app

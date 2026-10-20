@@ -5,7 +5,7 @@ Dijital Coban | Akilli Ahir Cozumleri icin ziyaretci sohbeti ve lead toplama sis
 ## Mimari
 - `config.py`: ayarlar (.env) + BUSINESS_CONTEXT
 - `app/database.py`: SQLite (SQL sadece burada)
-- `app/services/ai_service.py`: AI cagrilari (sadece burada): NVIDIA DeepSeek -> NVIDIA gpt-oss -> Groq gpt-oss-120b -> Groq qwen yedek zinciri, demo modu
+- `app/services/ai_service.py`: AI cagrilari (sadece burada): NVIDIA DeepSeek -> NVIDIA gpt-oss -> Groq qwen -> Groq gpt-oss-20b yedek zinciri, demo modu
 - `app/routes.py`: HTTP rotalari (dogrulama + yonlendirme)
 - `app/__init__.py`: create_app() fabrikasi + /health
 - `wix_velo/`: Wix Studio sayfalarina yapistirilacak Velo kodlari
@@ -50,8 +50,8 @@ Environment Variables:
 | `NVIDIA_API_KEY_2` | 2. NVIDIA anahtari (gpt-oss-20b) |
 | `NVIDIA_MODEL_2` | `openai/gpt-oss-20b` |
 | `GROQ_API_KEY` | Groq anahtari (son yedek) |
-| `GROQ_MODEL` | `openai/gpt-oss-120b` |
-| `GROQ_MODEL_2` | `qwen/qwen3.8-27b` |
+| `GROQ_MODEL` | `qwen/qwen3.8-27b` |
+| `GROQ_MODEL_2` | `openai/gpt-oss-20b` |
 | `SECRET_KEY` | uzun rastgele metin |
 | `DATABASE_URL` | Neon/Render PostgreSQL baglanti adresi (`postgresql://...`) — kalici veritabani |
 | `CORS_ORIGINS` | `https://furkanduman1925.wixsite.com` |

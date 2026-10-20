@@ -30,6 +30,7 @@ class SmartLeadTest(unittest.TestCase):
         r = self.c.get("/health")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.get_json()["durum"], "ok")
+        self.assertEqual(r.get_json()["veritabani"], "sqlite")
 
     def test_sayfalar(self):
         r = self.c.get("/")
@@ -82,7 +83,7 @@ class SmartLeadTest(unittest.TestCase):
             r = self.c.post("/api/sohbet", json={"mesaj": "Merhaba"})
         self.assertEqual(r.get_json()["cevap"], "Groq yanıtı")
         denenen = [k.kwargs["json"]["model"] for k in c.call_args_list]
-        self.assertEqual(denenen, ["deepseek-ai/deepseek-v4.1-flash", "openai/gpt-oss-20b", "openai/gpt-oss-120b"])
+        self.assertEqual(denenen, ["deepseek-ai/deepseek-v4.1-flash", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"])
 
     def test_lead_kaydet_ve_listele(self):
         r = self.c.post("/api/leads", json={"isim": "Mehmet Aydın", "telefon": "0532 123 45 27",

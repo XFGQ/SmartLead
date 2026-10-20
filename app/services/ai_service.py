@@ -1,6 +1,6 @@
 # app/services/ai_service.py - Dijital Coban SmartLead AI
 # Modul C: yapay zeka cagrilari SADECE burada. Flask rotasi ve veritabani bilmez.
-# Modeller sirayla denenir (NVIDIA DeepSeek -> NVIDIA gpt-oss -> Groq -> Groq yedek);
+# Modeller sirayla denenir (NVIDIA DeepSeek -> NVIDIA gpt-oss -> Groq qwen -> Groq gpt-oss-20b);
 # biri hata verir veya zaman asimina duserse siradakine gecilir.
 import re
 import time

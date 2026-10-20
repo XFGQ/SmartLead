@@ -41,8 +41,8 @@ class Config:
     NVIDIA_MODEL_2 = os.environ.get("NVIDIA_MODEL_2", "openai/gpt-oss-20b")
     NVIDIA_TIMEOUT = int(os.environ.get("NVIDIA_TIMEOUT", "12"))
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-    GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
-    GROQ_MODEL_2 = os.environ.get("GROQ_MODEL_2", "qwen/qwen3.8-27b")
+    GROQ_MODEL = os.environ.get("GROQ_MODEL", "qwen/qwen3.8-27b")
+    GROQ_MODEL_2 = os.environ.get("GROQ_MODEL_2", "openai/gpt-oss-20b")
     AI_TIMEOUT = int(os.environ.get("AI_TIMEOUT", "20"))
     # Wix site adresi; virgulle birden fazla adres yazilabilir
     CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "*").split(",")]
