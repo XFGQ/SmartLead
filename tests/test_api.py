@@ -144,6 +144,38 @@ class SmartLeadTest(unittest.TestCase):
         self.assertEqual(mesajlar["Ali"], "[Paket: Pro] Bergama")
         self.assertIsNone(mesajlar["Veli"])
 
+    def test_kvkk_onayi_ve_kaynak_kaydedilir(self):
+        self.c.post("/api/leads", json={"isim": "Ali", "telefon": "05321234567",
+                                        "kvkk": True, "kaynak": "iletisim-formu"})
+        self.c.post("/api/leads", json={"isim": "Veli", "telefon": "05321234568"})
+        kayitlar = {l["isim"]: l for l in self.c.get("/api/leads").get_json()["leadler"]}
+        self.assertIs(kayitlar["Ali"]["kvkk_onay"], True)
+        self.assertEqual(kayitlar["Ali"]["kaynak"], "iletisim-formu")
+        self.assertIs(kayitlar["Veli"]["kvkk_onay"], False)      # onay gelmezse False kalir
+        self.assertEqual(kayitlar["Veli"]["kaynak"], "bilinmiyor")
+
+    def test_eski_tabloya_eksik_kolonlar_eklenir(self):
+        """Tablo kvkk_onay/kaynak kolonlari olmadan olusmussa init_db onlari tamamlar."""
+        import sqlite3
+        yol = os.path.join(self.tmp.name, "eski.db")
+        eski = sqlite3.connect(yol)
+        eski.executescript("CREATE TABLE leads (id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           " isim TEXT NOT NULL, telefon TEXT NOT NULL, hayvan_sayisi INTEGER,"
+                           " mesaj TEXT, tarih TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        eski.execute("INSERT INTO leads (isim, telefon) VALUES ('Eski', '05321234569')")
+        eski.commit()
+        eski.close()
+
+        import config
+        config.TestingConfig.DATABASE_URL = yol
+        c = create_app("testing").test_client()
+        self.assertEqual(c.post("/api/leads", json={"isim": "Yeni", "telefon": "05321234567",
+                                                    "kvkk": True}).status_code, 201)
+        kayitlar = {l["isim"]: l for l in c.get("/api/leads").get_json()["leadler"]}
+        self.assertEqual(set(kayitlar), {"Eski", "Yeni"})        # eski kayit korunur
+        self.assertIs(kayitlar["Yeni"]["kvkk_onay"], True)
+        self.assertIsNone(kayitlar["Eski"]["kaynak"])
+
 
 if __name__ == "__main__":
     unittest.main()

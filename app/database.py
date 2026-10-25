@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS leads (
     telefon       TEXT    NOT NULL,
     hayvan_sayisi INTEGER,
     mesaj         TEXT,
+    kvkk_onay     INTEGER DEFAULT 0,
+    kaynak        TEXT,
     tarih         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 """
@@ -25,9 +27,18 @@ CREATE TABLE IF NOT EXISTS leads (
     telefon       TEXT    NOT NULL,
     hayvan_sayisi INTEGER,
     mesaj         TEXT,
+    kvkk_onay     BOOLEAN DEFAULT FALSE,
+    kaynak        TEXT,
     tarih         TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 );
 """
+
+# Tablo onceki surumde olusmussa CREATE TABLE IF NOT EXISTS yeni kolonlari eklemez;
+# asagidaki kolonlar eksikse tek tek eklenir (var olan kayitlar korunur).
+SONRADAN_EKLENEN_KOLONLAR = (
+    ("kvkk_onay", "BOOLEAN DEFAULT FALSE", "INTEGER DEFAULT 0"),
+    ("kaynak", "TEXT", "TEXT"),
+)
 
 
 def postgres_mu():
@@ -62,8 +73,21 @@ def _baglanti_kapat(_hata=None):
         db.close()
 
 
+def _eksik_kolonlari_ekle(db):
+    """Eski tabloya sonradan eklenen kolonlari tamamlar."""
+    if postgres_mu():
+        for ad, pg_tip, _ in SONRADAN_EKLENEN_KOLONLAR:
+            db.execute(f"ALTER TABLE leads ADD COLUMN IF NOT EXISTS {ad} {pg_tip}")
+        return
+    # SQLite'ta ADD COLUMN IF NOT EXISTS yoktur; mevcut kolonlar once okunur.
+    var_olan = {s["name"] for s in db.execute("PRAGMA table_info(leads)").fetchall()}
+    for ad, _, sqlite_tip in SONRADAN_EKLENEN_KOLONLAR:
+        if ad not in var_olan:
+            db.execute(f"ALTER TABLE leads ADD COLUMN {ad} {sqlite_tip}")
+
+
 def init_db(app):
-    """Tablo yoksa olusturur ve baglanti kapatma kancasini kaydeder."""
+    """Tablo yoksa olusturur, eksik kolonlari ekler ve baglanti kapatma kancasini kaydeder."""
     app.teardown_appcontext(_baglanti_kapat)
     with app.app_context():
         db = get_db()
@@ -71,15 +95,17 @@ def init_db(app):
             db.execute(SEMA_POSTGRES)
         else:
             db.executescript(SEMA_SQLITE)
+        _eksik_kolonlari_ekle(db)
         db.commit()
 
 
-def lead_ekle(isim, telefon, hayvan_sayisi=None, mesaj=None):
+def lead_ekle(isim, telefon, hayvan_sayisi=None, mesaj=None, kvkk_onay=False, kaynak=None):
     """Yeni lead kaydeder, kaydin id'sini dondurur. Tum degerler parametreli (SQL Injection korumasi)."""
     db = get_db()
     imlec = db.execute(
-        _sql("INSERT INTO leads (isim, telefon, hayvan_sayisi, mesaj) VALUES (?, ?, ?, ?) RETURNING id"),
-        (isim, telefon, hayvan_sayisi, mesaj),
+        _sql("INSERT INTO leads (isim, telefon, hayvan_sayisi, mesaj, kvkk_onay, kaynak)"
+             " VALUES (?, ?, ?, ?, ?, ?) RETURNING id"),
+        (isim, telefon, hayvan_sayisi, mesaj, bool(kvkk_onay), kaynak),
     )
     lead_id = imlec.fetchone()["id"]
     db.commit()
@@ -90,6 +116,8 @@ def tum_leadler():
     """Tum lead'leri en yeniden eskiye sozluk listesi olarak dondurur. Tarih: 'YYYY-MM-DD HH:MM:SS' (UTC)."""
     tarih = "to_char(tarih, 'YYYY-MM-DD HH24:MI:SS')" if postgres_mu() else "tarih"
     satirlar = get_db().execute(
-        f"SELECT id, isim, telefon, hayvan_sayisi, mesaj, {tarih} AS tarih FROM leads ORDER BY leads.tarih DESC, id DESC"
+        f"SELECT id, isim, telefon, hayvan_sayisi, mesaj, kvkk_onay, kaynak, {tarih} AS tarih"
+        " FROM leads ORDER BY leads.tarih DESC, id DESC"
     ).fetchall()
-    return [dict(s) for s in satirlar]
+    # kvkk_onay SQLite'ta 1/0, PostgreSQL'de true/false doner; panele her zaman bool gider.
+    return [dict(s, kvkk_onay=bool(s["kvkk_onay"])) for s in satirlar]

@@ -4,7 +4,9 @@ Dijital Coban | Akilli Ahir Cozumleri icin ziyaretci sohbeti ve lead toplama sis
 
 ## Mimari
 - `config.py`: ayarlar (.env) + BUSINESS_CONTEXT
-- `app/database.py`: SQLite (SQL sadece burada)
+- `app/database.py`: SQLite / PostgreSQL (SQL sadece burada). `leads` tablosu: `isim, telefon,
+  hayvan_sayisi, mesaj, kvkk_onay, kaynak, tarih`. Tablo eski surumden kalmissa eksik kolonlar
+  ilk acilista otomatik eklenir (`ALTER TABLE`), mevcut kayitlar korunur.
 - `app/services/ai_service.py`: AI cagrilari (sadece burada): NVIDIA DeepSeek -> NVIDIA gpt-oss -> Groq qwen -> Groq gpt-oss-20b yedek zinciri, demo modu
 - `app/routes.py`: HTTP rotalari (dogrulama + yonlendirme)
 - `app/__init__.py`: create_app() fabrikasi + /health
@@ -14,9 +16,10 @@ Dijital Coban | Akilli Ahir Cozumleri icin ziyaretci sohbeti ve lead toplama sis
 | Metod | Yol | Aciklama |
 |---|---|---|
 | GET | `/`, `/dashboard` | Karsilama ve yonetim paneli |
+| GET | `/form` | Wix'e iFrame ile gomulen "Bize Ulasin" formu |
 | GET | `/health` | Canlilik kontrolu |
 | POST | `/api/sohbet` | `{mesaj, gecmis}` -> `{basari, cevap}` |
-| POST | `/api/leads` | `{isim, telefon, hayvan_sayisi, mesaj}` -> 201 |
+| POST | `/api/leads` | `{isim, telefon, hayvan_sayisi, paket, mesaj, kvkk, kaynak}` -> 201 |
 | GET | `/api/leads` | `ADMIN_TOKEN` doluysa `X-Admin-Token` basligi gerekir |
 
 ## Calistirma

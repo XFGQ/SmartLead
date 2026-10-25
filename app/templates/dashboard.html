@@ -33,7 +33,7 @@ tbody tr:nth-child(even){background:#faf7f1}
 tbody tr:hover{background:var(--cayir)}
 tbody tr:last-child td{border-bottom:0}
 th:nth-child(1){width:16%}th:nth-child(2){width:15%}
-th:nth-child(3){width:10%}th:nth-child(5){width:14%}
+th:nth-child(3){width:10%}th:nth-child(5){width:14%}th:nth-child(6){width:12%}
 td:nth-child(3){text-align:center;font-weight:600}
 table:has(#tablo:empty)::after{
   content:"Henüz kayıt yok — yönetici anahtarını girip Yükle'ye basın";
@@ -62,10 +62,11 @@ table:has(#tablo:empty)::after{
     <input id="ara" placeholder="İsim veya mesajda ara">
   </div>
   <div id="durum"></div>
-  <table><thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan</th><th>Mesaj</th><th>Tarih</th></tr></thead><tbody id="tablo"></tbody></table>
+  <table><thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan</th><th>Mesaj</th><th>Kaynak</th><th>Tarih</th></tr></thead><tbody id="tablo"></tbody></table>
 </main>
 <script>
 let leadler = [];
+const KAYNAK_ADI = { 'iletisim-formu': 'İletişim formu', 'sohbet-asistani': 'Sohbet asistanı' };
 const tokenKutu = document.getElementById('token');
 try { tokenKutu.value = sessionStorage.getItem('dc_token') || ''; } catch (e) {}
 async function yukle(){
@@ -87,7 +88,8 @@ function ciz(){
   const tb=document.getElementById('tablo'); tb.replaceChildren();
   for(const l of liste){
     const tr=document.createElement('tr');
-    for(const deger of [l.isim,l.telefon,l.hayvan_sayisi??'–',l.mesaj||'–',l.tarih]){
+    const kaynak=(KAYNAK_ADI[l.kaynak]||l.kaynak||'bilinmiyor')+(l.kvkk_onay?' · KVKK onaylı':'');
+    for(const deger of [l.isim,l.telefon,l.hayvan_sayisi??'–',l.mesaj||'–',kaynak,l.tarih]){
       const td=document.createElement('td'); td.textContent=deger; tr.appendChild(td);   // textContent: XSS'e karsi
     }
     tb.appendChild(tr);

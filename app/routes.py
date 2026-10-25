@@ -70,6 +70,8 @@ def lead_kaydet():
         mesaj = f"[Paket: {paket}] {mesaj}".strip()
     mesaj = mesaj[:MESAJ_LIMITI] or None
     hayvan = veri.get("hayvan_sayisi")
+    kvkk_onay = bool(veri.get("kvkk"))
+    kaynak = str(veri.get("kaynak", "") or "").strip()[:40] or "bilinmiyor"
 
     if not isim or not telefon:
         return _hata("İsim ve telefon zorunludur.", 400)
@@ -87,7 +89,7 @@ def lead_kaydet():
         if not 0 <= hayvan <= 100000:
             return _hata("Hayvan sayısı 0 ile 100000 arasında olmalıdır.", 400)
 
-    lead_id = database.lead_ekle(isim, telefon, hayvan, mesaj)
+    lead_id = database.lead_ekle(isim, telefon, hayvan, mesaj, kvkk_onay, kaynak)
     return jsonify({"basari": True, "id": lead_id, "mesaj": "Talebiniz alındı, ekibimiz size dönüş yapacak."}), 201
 
 

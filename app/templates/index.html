@@ -667,8 +667,8 @@ tbody tr:last-child td{border-bottom:0}
         </div>
         <div style="overflow-x:auto">
         <table class="leads" id="leadsTablo">
-          <thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan sayısı</th><th>Mesaj</th><th>Tarih</th></tr></thead>
-          <tbody id="leadsGovde"><tr><td colspan="5">Yönetici girişi bekleniyor.</td></tr></tbody>
+          <thead><tr><th>İsim</th><th>Telefon</th><th>Hayvan sayısı</th><th>Mesaj</th><th>Kaynak</th><th>Tarih</th></tr></thead>
+          <tbody id="leadsGovde"><tr><td colspan="6">Yönetici girişi bekleniyor.</td></tr></tbody>
         </table>
         </div>
       </div>
@@ -932,7 +932,7 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
       s.addEventListener('click', function () { sor(s.textContent); });
     });
     $('kaydetButon').addEventListener('click', function () {
-      var veri = { isim: $('sIsim').value, telefon: $('sTelefon').value, hayvan_sayisi: $('sHayvan').value, mesaj: 'Sohbet asistanı üzerinden geri arama talebi' };
+      var veri = { isim: $('sIsim').value, telefon: $('sTelefon').value, hayvan_sayisi: $('sHayvan').value, mesaj: 'Sohbet asistanı üzerinden geri arama talebi', kaynak: 'sohbet-asistani' };
       istek('/api/leads', { method: 'POST', body: JSON.stringify(veri) })
         .then(function (v) { balon(v.basari ? v.mesaj : v.hata, 'bot'); if (v.basari) { $('sIsim').value = $('sTelefon').value = $('sHayvan').value = ''; } })
         .catch(function () { balon('Sunucuya ulaşılamadı.', 'bot'); });
@@ -947,7 +947,7 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
     form.appendChild(sonuc);
     $('gonderButon').addEventListener('click', function () {
       if (!$('kvkkOnay').checked) { sonuc.textContent = 'Lütfen KVKK Aydınlatma Metni onayını işaretleyin.'; sonuc.dataset.tur = 'hata'; return; }
-      var veri = { isim: $('isim').value, telefon: $('telefon').value, hayvan_sayisi: $('hayvan_sayisi').value, paket: $('paket').value, mesaj: $('mesaj').value };
+      var veri = { isim: $('isim').value, telefon: $('telefon').value, hayvan_sayisi: $('hayvan_sayisi').value, paket: $('paket').value, mesaj: $('mesaj').value, kvkk: true, kaynak: 'iletisim-formu' };
       $('gonderButon').disabled = true;
       istek('/api/leads', { method: 'POST', body: JSON.stringify(veri) })
         .then(function (v) { sonuc.textContent = v.basari ? v.mesaj : v.hata; sonuc.dataset.tur = v.basari ? 'ok' : 'hata'; if (v.basari) form.reset(); })
@@ -966,6 +966,11 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
   function durum(metin) { $('dashDurum').textContent = metin; }
   function tarihCoz(s) { return new Date(String(s).replace(' ', 'T') + 'Z'); }   // SQLite UTC
   function iki(n) { return (n < 10 ? '0' : '') + n; }
+  var KAYNAK_ADI = { 'iletisim-formu': 'İletişim formu', 'sohbet-asistani': 'Sohbet asistanı' };
+  function kaynakEtiketi(l) {
+    var ad = KAYNAK_ADI[l.kaynak] || l.kaynak || 'bilinmiyor';
+    return l.kvkk_onay ? ad + ' · KVKK onaylı' : ad;   // onayin kaydi KVKK ispati icin tutulur
+  }
 
   function girisDurumu(acik) {
     $('adminKey').hidden = acik; $('adminGiris').hidden = acik; $('adminCikis').hidden = !acik;
@@ -1042,11 +1047,12 @@ Yapılan düzeltme, silme, yok etme veya anonimleştirme işlemlerinin, kişisel
     });
     if (!liste.length) {
       var tr0 = document.createElement('tr'), td0 = document.createElement('td');
-      td0.colSpan = 5; td0.textContent = 'Kayıt yok.'; tr0.appendChild(td0); tb.appendChild(tr0);
+      td0.colSpan = 6; td0.textContent = 'Kayıt yok.'; tr0.appendChild(td0); tb.appendChild(tr0);
     }
     liste.forEach(function (l) {
       var t = tarihCoz(l.tarih);
       var hucreler = [[l.isim, ''], [l.telefon, ''], [l.hayvan_sayisi != null ? l.hayvan_sayisi : '–', 'sayi'], [l.mesaj || '–', 'mesaj'],
+        [kaynakEtiketi(l), 'mesaj'],
         [iki(t.getDate()) + '.' + iki(t.getMonth() + 1) + ' ' + iki(t.getHours()) + ':' + iki(t.getMinutes()), 'tarih']];
       var tr = document.createElement('tr');
       hucreler.forEach(function (h) { var td = document.createElement('td'); td.textContent = h[0]; if (h[1]) td.className = h[1]; tr.appendChild(td); });
